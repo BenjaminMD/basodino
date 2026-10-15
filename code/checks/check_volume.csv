@@ -1,0 +1,15 @@
+quantity,value,note
+rate 2012-2024,-0.943266,"published -0.943, sigma 0.136"
+k 2012-2024,0.855893,"+- 0.1234; 12 periods 2012-09-07 to 2024-09-03, chained True"
+rate 2021-2024,-1.9888,"published -1.989, sigma 0.251"
+k 2021-2024,0.845099,"+- 0.1067; 3 periods 2021-09-10 to 2024-09-03, chained True"
+rate 2012-2021,-0.584053,"published -0.584, sigma 0.111"
+k 2012-2021,0.852632,"+- 0.1620; 9 periods 2012-09-07 to 2021-09-10, chained True"
+2024/25 period,2024-09-03 to 2025-09-06,Ba -1.52; 2025/26 starts 2025-09-06: joins True
+loss 2021-2026 [ice 900 (approved)],0.016087,km3; ratio to map 1.1349
+loss 2012-2026 [ice 900 (approved)],0.026202,km3; ratio to map 2012 1.1552
+"loss 2021-2026 [850, geodetic convention of k]",0.0164201,km3; ratio to map 1.1584
+"loss 2012-2026 [850, geodetic convention of k]",0.0265351,km3; ratio to map 2012 1.1699
+ratio 2012-2024 (national row),0.90552,
+"sigma x n, 1907-2012",31.29,"m w.e.: the per-year reading; a whole-period reading gives 0.298 m w.e. for a 105-year map pair, implausible"
+"sigma x n, 1929-2012",23.406,"m w.e.: the per-year reading; a whole-period reading gives 0.282 m w.e. for a 83-year map pair, implausible"

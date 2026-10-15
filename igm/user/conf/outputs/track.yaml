@@ -1,0 +1,8 @@
+track:
+  dates: []                        # YYYY-MM-DD: thickness fields kept in fields.npz
+  save_net: ""                     # path (start directory) for the iceflow network after iteration 0
+  yearly: false                    # true: thk at every save in fields.npz (checks)
+  every: 0                         # N > 0: thk_yYYYY at the saves of years divisible by N (step 5: 10)
+  flowline: ""                     # npz with line_cell, line_s (start directory): length_m in series.csv (step 5)
+  stop_no_ice: true                # decision 14 stop at the first save without ice; false for spin-ups (step 5)
+  topg: true                       # false: topg left out of fields.npz (step 6)

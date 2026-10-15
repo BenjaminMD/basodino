@@ -1,0 +1,36 @@
+# @package _global_
+# Spin-up, decision 10: from ice-free on bed(u), the hydrological years 1865-1894 of the observed forcing in a fixed
+# cycle plus offset = dT_1850 (clim_otl.offset), cold start; model years 1551-1850 (300 years, the cap of one secant
+# run). Balance: the MAP draw (as fit.yaml) unless overridden (step 5: per draw, hindcast.py). The end state
+# (fields.npz thk_end) starts the hindcast.
+# F2 of the fix round (DESIGN.md): process basin after thk, ice only on the posbal cells (user/code/processes/basin).
+defaults:
+  - common: online
+  - /user/conf/inputs@inputs: [geometry]
+  - /user/conf/processes@processes: [clim_otl, smb_ti, basin]
+  - /user/conf/outputs@outputs: [track]
+  - override /inputs: [geometry]
+  - override /processes: [clim_otl, smb_ti, iceflow, time, thk, basin]
+  - override /outputs: [track]
+
+inputs:
+  geometry:
+    dem: none
+    u: 0.0
+processes:
+  clim_otl:
+    cycle: [1865, 1894]
+    offset: 0.0
+    dT: -2.4563
+    dg: 0.0015805
+    b: -0.00013046
+    c_prec: 2.7247
+  smb_ti:
+    Fm: 0.001047871
+  time:
+    start: 1550.75
+    end: 1850.75
+outputs:
+  track:
+    stop_no_ice: false               # from ice-free: the first year's snow can stay below 1 m (step 5)
+    flowline: inputs/step5_targets.npz

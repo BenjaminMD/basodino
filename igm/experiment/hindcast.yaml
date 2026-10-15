@@ -1,0 +1,38 @@
+# @package _global_
+# Hindcast, decision 11 (DESIGN.md step 5): from the end state of a draw's spin-up (inputs.geometry.restart = its
+# fields.npz: topg, thk_end on 1850-10-01) 1850.75 to 2026.75 with the observed weather of decision 6 (no cycle, no
+# offset), cold start (3000 initial iterations, common online). Per run (hindcast.py hind): restart, u (bed of the
+# draw, for the record; the restart carries topg), the balance draw (clim_otl.*, smb_ti.Fm) and f (arrhenius,
+# tau_ref). track keeps thk at the validation dates (targets_step5.py), at every save of a year divisible by 10
+# (thk_yYYYY) and at the end (thk_end = the 2026-09-30 state, the 2026.75 save), and the length along the flowline.
+# F2 of the fix round (DESIGN.md): process basin after thk, ice only on the posbal cells (user/code/processes/basin).
+defaults:
+  - common: online
+  - /user/conf/inputs@inputs: [geometry]
+  - /user/conf/processes@processes: [clim_otl, smb_ti, basin]
+  - /user/conf/outputs@outputs: [track]
+  - override /inputs: [geometry]
+  - override /processes: [clim_otl, smb_ti, iceflow, time, thk, basin]
+  - override /outputs: [track]
+
+inputs:
+  geometry:
+    dem: restart
+    u: 0.0
+processes:
+  clim_otl:
+    cycle: null
+    offset: 0.0
+  time:
+    start: 1850.75
+    end: 2026.75
+outputs:
+  track:
+    dates: ['1907-10-01', '1929-08-13', '1949-10-07', '1961-09-19', '1971-09-03', '1973-10-01', '1985-09-10',
+            '1991-09-18', '2002-09-16', '2008-08-29', '2010-10-01', '2012-09-01', '2013-08-21', '2018-09-01',
+            '2018-10-01', '2021-09-30', '2024-08-23', '2025-09-07', '2026-09-27']
+    # volume-change surveys 1907-1991, inventories 1929 (SGI1931), 1973, 2010, 2018 (SGI2016), surfaces 1991, 2012,
+    # 2021; the step-4 outline dates 2024, 2025, 2026 (compared, not validated); fix round (F5): the geodetic surveys
+    # 2002, 2008, 2013, 2018 (day unknown: 2018-09-01, as F1) of the 1991-2024 volume changes
+    every: 10
+    flowline: inputs/step5_targets.npz

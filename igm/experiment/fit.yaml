@@ -1,0 +1,36 @@
+# @package _global_
+# Start state and flow, decision 9: one segment, observed weather, the MAP balance draw of the accepted step-2
+# posterior (results/calib_summary.csv, fourth attempt with dT; r_ice = 0.012 Fm). Segments:
+#   1991: inputs.geometry.dem=1994, time 1991.75-2021.75     2021: dem=2021, time 2021.75-2026.75
+# Per run: inputs.geometry.u, the balance draw (clim_otl.*, smb_ti.Fm), f (arrhenius, tau_ref), outputs.track.dates.
+# A velocity snapshot of the start state (gate 3b): time.end = time.start (one iteration, saved by track).
+# Warm start (decision 1): processes.iceflow.unified.nbit_init=0 processes.warmstart.net=<npz> [warmstart.nbit].
+# F2 of the fix round (DESIGN.md): process basin after thk, ice only on the posbal cells (user/code/processes/basin).
+defaults:
+  - common: online
+  - /user/conf/inputs@inputs: [geometry]
+  - /user/conf/processes@processes: [clim_otl, smb_ti, warmstart, basin]
+  - /user/conf/outputs@outputs: [track]
+  - override /inputs: [geometry]
+  - override /processes: [clim_otl, smb_ti, iceflow, warmstart, time, thk, basin]
+  - override /outputs: [track]
+
+inputs:
+  geometry:
+    dem: 1994
+    u: 0.0
+processes:
+  clim_otl:
+    dT: -2.4563
+    dg: 0.0015805
+    b: -0.00013046
+    c_prec: 2.7247
+  smb_ti:
+    Fm: 0.001047871
+  time:
+    start: 1991.75
+    end: 2021.75
+outputs:
+  track:
+    dates: ['2005-10-01', '2006-10-01', '2012-09-01', '2021-09-30', '2024-08-23', '2025-09-07', '2026-09-27']
+    # radar 2006 (mean of the two 1 October states, step 4); 2012 as calib_smb.py; outline dates (decision 9)

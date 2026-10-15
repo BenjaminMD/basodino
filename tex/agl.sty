@@ -1,0 +1,881 @@
+% agl.sty -- house style for "Applied Glaciology -- Assignments part 1"
+% (Ghiacciaio del Basòdino, ETH Zürich, Fall Semester 2026).
+%
+% main.tex holds content only; every layout, font, colour and environment
+% decision lives here. Engine: LuaLaTeX (fontspec, piton, page-size switch
+% for landscape plates). Build: latexmk (see .latexmkrc).
+%
+% Interface used in main.tex
+%   \groupmembers{Name One, Name Two, ...}   names on every page and the title page
+%   \title \subtitle \date                   title page
+%   \herofigure{file}{caption}{credit}       title-page image, 210 x 88 mm, full bleed
+%   \begin{question}{3.1}{7} ... \end{question}           "Question 3.1 [7 pts]" box
+%   \plate{plate1_tour}                      landscape plate page from <id>_map.pdf,
+%                                            <id>_legend.pdf and the sidecar text
+%   \atlasfig{elevation_glacier}             atlas figure, one or two per page
+%   \sidecarfigure[pos]{dir/stem}            floating figure with sidecar text
+%   \platedir{dir} \atlasdir{dir}            where plates and atlas figures are
+%                                            (sidecar files: see SIDECARS.md)
+%   \plateversion{atlas}                     plates from <id>_map_atlas.pdf and
+%                                            <id>_legend_atlas.pdf where present
+%   \credit{Data: \textcopyright\,swisstopo}  source line under a figure or table
+%   \codefile{path}                          Python listing (placeholder if missing)
+%   \placeholder{text}                       unfinished text: grey, counted in the log
+%   units inside \qty/\unit: \mwe \mwea \ddf \kmcubed \masl \we \annum
+%   colours: glacier water ice rock accent text rule ink (palette of the maps)
+% Missing image files never stop the build: \includegraphics draws a
+% placeholder of the requested size and logs a warning with the size in mm.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{agl}[2026/09/30 Applied Glaciology report style]
+\RequirePackage{iftex}
+\RequireLuaTeX
+
+% ------------------------------------------------------------------ layout
+% Text pages: A4 portrait, 30 mm left and right, 25 mm top, 30 mm bottom;
+% header rule 17 mm and footer baseline 16 mm from the edges. Text block
+% 150 x 242 mm (about 87 characters per line in 11 pt Source Serif 4).
+% Plate pages: A4 landscape, a real 297 x 210 mm page. The text block is
+% the plate area, 273 x 175 mm: 12 mm side margins, a 20 mm header zone
+% (course and group names, rule 14 mm from the top edge) and a 15 mm
+% footer zone (page number, baseline 9 mm from the bottom edge).
+\KOMAoptions{fontsize=11pt, parskip=false, numbers=noendperiod}
+\linespread{1.05}
+\newcommand*\agl@layout[6]{% paper, text width, text height, text top, \headsep, \footskip
+  \KOMAoptions{paper=#1}\areaset{#2}{#3}%
+  % \areaset leaves 1/3 of the free height above the text: move the text
+  % top to #4 and keep it there while \headsep changes.
+  \addtolength\topmargin{\dimexpr #4-(\paperheight-\textheight)/3+\headsep-#5\relax}%
+  \setlength\headsep{#5}%
+  \setlength\footskip{#6}%
+  \setlength\footheight{2.2\baselineskip}}% room for names on two lines
+\newcommand*\agl@portrait{\agl@layout{portrait}{150mm}{242mm}{25mm}{8mm}{14mm}}
+\newcommand*\agl@platelayout{\agl@layout{landscape}{273mm}{175mm}{20mm}{6mm}{6mm}}
+\agl@portrait
+
+% ------------------------------------------------------------------- fonts
+\RequirePackage{fontspec}
+\RequirePackage{amsmath}
+\RequirePackage{unicode-math}
+\setmainfont{SourceSerif4}[
+  Extension = .otf, UprightFont = *-Regular, ItalicFont = *-RegularIt,
+  BoldFont = *-Semibold, BoldItalicFont = *-SemiboldIt,
+  Numbers = Proportional]
+\setsansfont{SourceSans3}[
+  Extension = .otf, UprightFont = *-Regular, ItalicFont = *-RegularIt,
+  BoldFont = *-Semibold, BoldItalicFont = *-SemiboldIt,
+  FontFace = {l}{n}{*-Light},
+  Numbers = Proportional]
+\setmonofont{SourceCodePro}[
+  Extension = .otf, UprightFont = *-Regular, ItalicFont = *-RegularIt,
+  BoldFont = *-Semibold, BoldItalicFont = *-SemiboldIt,
+  Scale = MatchLowercase]
+% Math font: STIX Two Math, chosen against Libertinus Math in test/mathfont.tex.
+%  - x-height 473/1000 against 475/1000 for Source Serif 4. Libertinus Math has
+%    429: its letters look 10 % small next to the text, and scaling it up
+%    (Scale=MatchLowercase) makes its capitals 10 % too tall instead.
+%  - STIX Two is a transitional face with the stroke weight and contrast of
+%    Source Serif 4; Libertinus is lighter and more calligraphic beside it.
+% Digits in formulas come from Source Serif 4, so 850 reads the same in text,
+% tables and equations.
+\setmathfont{STIXTwoMath-Regular.otf}
+\setmathfont{SourceSerif4-Regular.otf}[range=up/{num,latin,Latin}]% digits and upright letters as in the text
+\setmathfont{SourceSerif4-RegularIt.otf}[range=it/{latin,Latin}]% variables in the text italic; Greek and symbols stay STIX
+
+% ------------------------------------------------------------------ colour
+% One palette for report and maps: report_palette in ../maps/style.json,
+% copied 2026-09-30. Change it there, then here. Contrast on white in
+% brackets.
+\RequirePackage{xcolor}
+\definecolor{glacier}{HTML}{027ABE}% blue ink of glacier names: headings, links, labels (4.6:1)
+\definecolor{water}{HTML}{027ABE}% same blue: water, code strings (4.6:1)
+\definecolor{ice}{HTML}{DCEBF4}% flat tone of the glacier relief: box backgrounds
+\definecolor{rock}{HTML}{4D4D4D}% grid-label grey: secondary text, header, footer (8.5:1)
+\definecolor{accent}{HTML}{C51415}% mountain-trail red: routes, markers, highlights (6.0:1)
+\definecolor{text}{HTML}{1A1A1A}% body text (17.4:1)
+\definecolor{rule}{HTML}{B3B3B3}% legend-rule grey: rules and frames
+\colorlet{ink}{glacier!30!black}% title and heading text (15.8:1)
+\color{text}% the normal colour of the document
+
+% ------------------------------------------- language and microtypography
+\RequirePackage[british]{babel}
+\RequirePackage[autostyle]{csquotes}
+\RequirePackage[protrusion=true, expansion=true]{microtype}
+\RequirePackage{enumitem}
+\setlist{itemsep=1.5pt, parsep=0pt, topsep=.3\baselineskip}% lists in the rhythm of the paragraphs
+\frenchspacing
+\clubpenalty=10000 \widowpenalty=10000 \displaywidowpenalty=10000
+\setlength\emergencystretch{1.5em}
+\raggedbottom
+
+% ---------------------------------------------------------------- headings
+% Numbers hang in the left margin, titles align with the text.
+\setkomafont{disposition}{\sffamily\bfseries\color{ink}}
+\setkomafont{section}{\fontsize{15}{19}\selectfont}
+\setkomafont{subsection}{\fontsize{12}{15}\selectfont}
+\setkomafont{subsubsection}{\normalsize}
+\renewcommand*\sectionformat{\makebox[0pt][r]{\textcolor{glacier}{\thesection}\hspace{3.5mm}}}
+\renewcommand*\subsectionformat{\makebox[0pt][r]{\textcolor{glacier}{\thesubsection}\hspace{3.5mm}}}
+\RedeclareSectionCommand[
+  beforeskip=-2.2\baselineskip plus -.6\baselineskip minus -.3\baselineskip,
+  afterskip=.8\baselineskip plus .2\baselineskip]{section}
+\RedeclareSectionCommand[
+  beforeskip=-1.5\baselineskip plus -.4\baselineskip minus -.2\baselineskip,
+  afterskip=.5\baselineskip plus .1\baselineskip]{subsection}
+
+% ------------------------------------------------------- header and footer
+% On every page, title page included: course and section on top, group
+% members and "Page x of y" at the bottom. Plate pages: course and group
+% members on top, caption and "Page x of y" at the bottom.
+\RequirePackage[headsepline=.4pt, plainheadsepline]{scrlayer-scrpage}
+\automark[section]{section}
+\renewcommand*\sectionmarkformat{\thesection\enskip}
+\ExplSyntaxOn
+\clist_new:N \g__agl_members_clist
+\NewDocumentCommand \groupmembers { m } { \clist_gset:Nn \g__agl_members_clist {#1} }
+\cs_new:Npn \agl@names #1 { \clist_use:Nn \g__agl_members_clist {#1} }
+\cs_new_protected:Npn \agl@namelist { \clist_map_inline:Nn \g__agl_members_clist { ##1 \par } }
+% names on one line: never split, lines break only after a separator dot
+\cs_new_protected:Npn \agl@nameline
+  {
+    \seq_set_from_clist:NN \l_tmpa_seq \g__agl_members_clist
+    \seq_set_map:NNn \l_tmpa_seq \l_tmpa_seq { \mbox{##1} }
+    \seq_use:Nn \l_tmpa_seq { \nobreak\enskip\textperiodcentered\enskip }
+  }
+\ExplSyntaxOff
+\clearpairofpagestyles
+\ihead*{Applied Glaciology -- Assignments part~1}
+\ohead*{\headmark}
+% Footer parts sit on one baseline, text bottom + \footskip; a long list of
+% names wraps upwards instead of running into the page number. (The foot
+% layer hangs from its top edge, which lies at text bottom + \footskip +
+% strut depth - \footheight; that strut is the normal-size one of the
+% output routine, not the footer's.)
+\newlength\agl@footdp
+\AtBeginDocument{\setlength\agl@footdp{\dp\strutbox}}
+\newcommand\agl@foot[1]{\vbox to \dimexpr\footheight-\agl@footdp\relax{\vfill\hbox{#1\strut}}}
+\ifoot*{\agl@foot{\parbox[b]{\dimexpr\textwidth-30mm\relax}{\raggedright\color{ink}\agl@nameline}}}
+\ofoot*{\agl@foot{Page \thepage\ of \PreviousTotalPages}}
+% bare: the same foot, no head and no head rule (title page, picture pages)
+\newpairofpagestyles{bare}{%
+  \ifoot*{\agl@foot{\parbox[b]{\dimexpr\textwidth-30mm\relax}{\raggedright\color{ink}\agl@nameline}}}%
+  \ofoot*{\agl@foot{Page \thepage\ of \PreviousTotalPages}}}
+\setkomafont{pageheadfoot}{\sffamily\footnotesize\color{rock}}
+\setkomafont{pagenumber}{}
+\setkomafont{headsepline}{\color{rule}}
+\pagestyle{scrheadings}
+% plate pages: group names in the header, the page number alone in the footer
+\newpairofpagestyles[scrheadings]{plate}{%
+  \ohead*{\textcolor{ink}{\agl@nameline}}%
+  \ifoot*{}}
+
+% -------------------------------------------------------------- title page
+\newcommand*\agl@label[1]{%
+  {\sffamily\bfseries\scriptsize\color{glacier}\addfontfeature{LetterSpace=9}\MakeUppercase{#1}}}
+\newcommand*\agl@hero{}
+\NewDocumentCommand\herofigure{m m m}{\def\agl@hero{\agl@herobox{#1}{#2}{#3}}}
+\newcommand\agl@herobox[3]{%
+  \makebox[\textwidth][c]{\includegraphics[width=\paperwidth,height=88mm,keepaspectratio]{#1}}\par
+  \credit{#3}%
+  {\sffamily\small\color{rock}#2\par}}
+% contents on the title page; tocbasic resets the page-number font to
+% \normalfont\normalsize, so family and size are set here
+\newcommand*\agl@tocpage[2]{{\sffamily\footnotesize\color{#1}#2}}
+\DeclareTOCStyleEntry[
+  beforeskip=.3em plus 1pt, indent=0pt, numwidth=1.6em,
+  entryformat=\bfseries\color{ink}, entrynumberformat=\textcolor{glacier},
+  pagenumberformat=\agl@tocpage{ink}, linefill=\hfill]{tocline}{section}
+\DeclareTOCStyleEntry[
+  level=1, beforeskip=0pt, indent=1.6em, numwidth=0pt,
+  entryformat=\color{rock}, pagenumberformat=\agl@tocpage{rock},
+  linefill=\hfill]{tocline}{question}
+% PDF bookmarks: questions nested below their section (the contents list
+% itself uses \questiontocdepth, set by level=1 above).
+\AtBeginDocument{\def\toclevel@question{2}}
+\setcounter{tocdepth}{1}
+\renewcommand*\maketitle{%
+  \thispagestyle{bare}\KOMAoptions{headsepline=false}% outside the group: the page ships after it
+  \begingroup
+  \setlength\parindent{0pt}%
+  \sffamily
+  \agl@label{Applied Glaciology\enskip\textperiodcentered\enskip Assignments part 1%
+    \enskip\textperiodcentered\enskip Fall Semester 2026}\par
+  \vspace{5mm}%
+  {\fontsize{34}{38}\selectfont\bfseries\color{ink}\@title\par}%
+  \ifx\@subtitle\@empty\else
+    \vspace{3mm}%
+    {\fontsize{15}{19}\fontseries{l}\selectfont\color{rock}\@subtitle\par}%
+  \fi
+  \vspace{9mm}%
+  \agl@hero
+  \vfill
+  \begin{minipage}[t]{.38\textwidth}\raggedright
+    \agl@label{Group}\par\vspace{2mm}%
+    {\large\color{ink}\agl@namelist}%
+    \vspace{5mm}%
+    \agl@label{Submitted}\par\vspace{2mm}%
+    {\color{ink}\@date\par ETH Zürich\par}%
+  \end{minipage}\hfill
+  \begin{minipage}[t]{.54\textwidth}
+    \agl@label{Contents}\par\vspace{2mm}%
+    % unnumbered entries align with the numbered titles, as in the body
+    {\footnotesize\hypersetup{linkcolor=.}\renewcommand*\nonumberline{\numberline{}}%
+     \listoftoc*{toc}}%
+  \end{minipage}\par
+  \endgroup
+  \clearpage\KOMAoptions{headsepline=.4pt}}
+
+% ------------------------------------------------------ figures and captions
+\RequirePackage{graphicx}
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
+\RequirePackage{flafter}% a float never appears before the text that calls it
+\RequirePackage{caption}
+\RequirePackage{subcaption}
+\captionsetup{format=hang, font={sf,small}, labelfont={bf,color=glacier}, labelsep=quad,
+  justification=raggedright, singlelinecheck=false, skip=6pt}
+\captionsetup[sub]{font={sf,footnotesize}, labelfont={bf,color=glacier},
+  labelformat=parens, labelsep=space, skip=4pt}
+\captionsetup[table]{position=top, skip=5pt}
+\renewcommand*\topfraction{.9}
+\renewcommand*\bottomfraction{.5}
+\renewcommand*\textfraction{.1}
+\renewcommand*\floatpagefraction{.8}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{4}
+% Figures and tables go where they are written if they fit (then top of a
+% later page, never before the calling text: flafter). Pages of floats only
+% are filled from the top, like the plates and the atlas.
+\def\fps@figure{htbp}
+\def\fps@table{htbp}
+\setlength\@fptop{0pt}
+\setlength\@fpsep{1.5\baselineskip}
+\setlength\@fpbot{0pt plus 1fil}
+% Float content is centred; tables are set in Source Sans 3 with tabular
+% figures, so digits line up. (Code must run inside the float box, after
+% LaTeX resets the font there, hence \@floatboxreset.)
+\def\agl@tablename{table}
+\g@addto@macro\@floatboxreset{%
+  \centering
+  \ifx\@captype\agl@tablename\sffamily\small\addfontfeature{Numbers=Tabular}\fi}
+% Source line under an image or table, right-aligned.
+\newcommand*\credit[1]{%
+  \par\nobreak\vspace{2pt}{\raggedleft\sffamily\scriptsize\color{rock}#1\par}}
+% Figures and plates share the list of figures ("Figure A.1", "Plate 4b"),
+% set like the contents: Source Sans 3, no dot leaders.
+\newcommand*\agl@lofnumber[2]{\textcolor{rock}{#1~#2}}
+\newcommand*\agl@lofpage[1]{{\sffamily\small\color{rock}#1}}
+\DeclareTOCStyleEntry[level=1, indent=0pt, numwidth=5.6em, beforeskip=.2em plus 1pt,
+  entryformat=\sffamily\small, pagenumberformat=\agl@lofpage, linefill=\hfill,
+  entrynumberformat=\agl@lofnumber{\figurename}]{tocline}{figure}
+\DeclareTOCStyleEntry[level=1, indent=0pt, numwidth=5.6em, beforeskip=.2em plus 1pt,
+  entryformat=\sffamily\small, pagenumberformat=\agl@lofpage, linefill=\hfill,
+  entrynumberformat=\agl@lofnumber{\platename}]{tocline}{plate}
+\BeforeStartingTOC[lof]{\hypersetup{linkcolor=.}}% text colour, as in the contents
+\AtBeginDocument{\renewcaptionname{british}{\listfigurename}{Figures and plates}}
+
+% ------------------------------------------ sidecar text: plates and figures
+% Figures and plates hold graphics only. Their text lives in sidecar files
+% next to the graphic and is set here (interface: SIDECARS.md):
+%   <stem>.caption.tex  \renewcommand\FigTitle{..} \FigText{..} \FigCredits{..}
+%   <stem>.table.tex    optional: one tabular* of width \linewidth
+% A name without a slash is looked up in \platedir or \atlasdir; its label
+% is the name (\cref{plate3_ortho}, \cref{elevation_glacier}).
+%
+% Plate page (landscape, plate area 273 x 175 mm): <id>_map.pdf, 175 x 175 mm,
+% at 100 % on the left; a 6 mm gutter; a 92 mm sidebar with <id>_legend.pdf
+% (92 mm wide, at most 105 mm high) at the top, then "Plate n", \FigTitle,
+% \FigText and the table, and \FigCredits at the foot, its last baseline on
+% the bottom edge of the map. The plate number comes from the id
+% (plate4b_sentinel is Plate 4b). A plate ends the current page.
+\newcommand\FigTitle{}
+\newcommand\FigText{}
+\newcommand\FigCredits{}
+\newcounter{plate}
+\newcommand*\platename{Plate}
+\newcommand*\agl@rag{% ragged right with a soft rag: lines may hyphenate
+  \setlength\leftskip{0pt}\setlength\rightskip{0pt plus 2.5em}%
+  \setlength\parfillskip{0pt plus 1fil}\setlength\parindent{0pt}}
+\newcommand*\agl@platehead{% "Plate 1" and the title
+  {\agl@rag\sffamily\bfseries\small\color{glacier}\platename~\theplate\par}%
+  {\agl@rag\sffamily\bfseries\fontsize{14}{17}\selectfont\color{ink}\FigTitle\par}}
+\newcommand*\agl@platetext{%
+  \vspace{3.5mm}%
+  {\agl@rag\sffamily\small\color{text}\FigText\par}}
+\newcommand*\agl@credits{% plates: foot of the sidebar; figures: after the caption
+  {\agl@rag\sffamily\scriptsize\color{rock}\FigCredits\par}}
+% Tables that belong to a figure or plate: 92 mm wide (the plate sidebar;
+% under a figure aligned with the caption text), 8 pt Source Sans 3 with
+% tabular figures.
+\newcommand*\agl@tablefont{%
+  \sffamily\scriptsize\addfontfeature{Numbers=Tabular}\color{text}%
+  \setlength\tabcolsep{4pt}%
+  % booktabs rules and gaps in proportion to the 8 pt type (booktabs fixes
+  % them at load time from the 11 pt text: 0.88 pt rules would look heavy)
+  \setlength\heavyrulewidth{.08em}\setlength\lightrulewidth{.05em}%
+  \setlength\cmidrulewidth{.03em}%
+  \setlength\aboverulesep{.4ex}\setlength\belowrulesep{.65ex}}
+\ExplSyntaxOn
+\str_new:N \g__agl_platedir_str
+\str_new:N \g__agl_atlasdir_str
+\cs_new_protected:Npn \__agl_setdir:Nn #1#2
+  {
+    \str_gset:Nn #1 {#2}
+    \str_if_eq:eeT { \str_item:Nn #1 { -1 } } { / }
+      { \str_gset:Ne #1 { \str_range:Nnn #1 { 1 } { -2 } } }
+  }
+\NewDocumentCommand \platedir { m } { \__agl_setdir:Nn \g__agl_platedir_str {#1} }
+\NewDocumentCommand \atlasdir { m } { \__agl_setdir:Nn \g__agl_atlasdir_str {#1} }
+\platedir { ../maps/plates/out }
+\atlasdir { ../maps/figures_v2 }
+% High-resolution build (plates_atlas.tex): <stem>_map_<version>.pdf and
+% <stem>_legend_<version>.pdf replace the report files where they exist.
+\str_new:N \g__agl_version_str
+\NewDocumentCommand \plateversion { m } { \str_gset:Nn \g__agl_version_str {#1} }
+\dim_const:Nn \c__agl_map_dim { 175mm }
+\dim_const:Nn \c__agl_side_dim { 92mm }
+\dim_const:Nn \c__agl_legend_dim { 105mm }
+\dim_const:Nn \c__agl_gutter_dim { 6mm }
+\dim_const:Nn \c__agl_legendgap_dim { 8mm }
+\dim_const:Nn \c__agl_creditgap_dim { 6mm }
+\dim_const:Nn \c__agl_atlasgap_dim { 10mm }
+\str_new:N \l__agl_dir_str
+\str_new:N \l__agl_name_str
+\str_new:N \l__agl_ext_str
+\str_new:N \l__agl_stem_str
+\str_new:N \l__agl_file_str
+\bool_new:N \l__agl_table_bool
+\box_new:N \l__agl_map_box
+\box_new:N \l__agl_legend_box
+\box_new:N \l__agl_top_box
+\box_new:N \l__agl_credits_box
+\box_new:N \l__agl_block_box
+\seq_new:N \l__agl_match_seq
+\tl_new:N \l__agl_number_tl
+\tl_new:N \l__agl_title_tl
+\dim_new:N \l__agl_excess_dim
+\dim_new:N \l__agl_legend_dim
+\msg_new:nnn { agl } { missing-caption }
+  { Caption~file~`#1'~not~found;~the~page~shows~a~placeholder. }
+\msg_new:nnn { agl } { plate-map }
+  { Plate~map~`#1'~is~#2~mm,~not~175~x~175~mm;~placed~at~100~\c_percent_str. }
+\msg_new:nnn { agl } { plate-legend }
+  {
+    Plate~legend~`#1'~is~#2~mm,~not~92~mm~wide~and~at~most~105~mm~high;~
+    placed~at~100~\c_percent_str.
+  }
+\msg_new:nnn { agl } { plate-sidebar }
+  {
+    Plate~#1:~the~sidebar~is~#2~mm~too~tall~(about~#3~lines~of~text);~
+    shorten~\iow_char:N\\FigText~or~the~legend.
+  }
+\msg_new:nnn { agl } { plate-room }
+  { Plate~#1:~legend~#2~mm~high,~#3~mm~of~the~sidebar~left~free. }
+\msg_new:nnn { agl } { plate-version }
+  { No~`#1_#2';~using~`#1'. }
+\msg_new:nnn { agl } { figure-width }
+  { Figure~`#1'~is~#2~mm~wide,~not~#3~mm;~scaled~to~#4~\c_percent_str. }
+\msg_new:nnn { agl } { atlas-height }
+  { Atlas~figure~`#1'~with~its~caption~is~#2~mm~high,~more~than~a~page~(#3~mm). }
+\cs_generate_variant:Nn \msg_warning:nnnnn { nneee }
+\cs_generate_variant:Nn \msg_warning:nnnnnn { nneeee }
+\cs_generate_variant:Nn \msg_info:nnnnn { nneee }
+% "W x H" of a box in mm, one decimal
+\cs_new:Npn \__agl_size:N #1
+  {
+    \fp_eval:n { round ( \dim_to_decimal_in_unit:nn { \box_wd:N #1 } { 1 mm } , 1 ) }
+    \c_space_tl x \c_space_tl
+    \fp_eval:n { round ( \dim_to_decimal_in_unit:nn { \box_ht:N #1 + \box_dp:N #1 } { 1 mm } , 1 ) }
+  }
+% Directory and name of a sidecar set: #2 as given if it has a directory,
+% else in directory #1.
+\cs_new_protected:Npn \__agl_stem:Nn #1#2
+  {
+    \file_parse_full_name:nNNN {#2} \l__agl_dir_str \l__agl_name_str \l__agl_ext_str
+    \str_put_right:NV \l__agl_name_str \l__agl_ext_str
+    \str_if_empty:NT \l__agl_dir_str { \str_set_eq:NN \l__agl_dir_str #1 }
+    \str_set:Ne \l__agl_stem_str { \l__agl_dir_str / \l__agl_name_str }
+  }
+% Read <stem>.caption.tex (placeholder text if missing); note a table file.
+\cs_new_protected:Npn \__agl_sidecar:
+  {
+    \cs_set:Npn \FigTitle { }
+    \cs_set:Npn \FigText { }
+    \cs_set:Npn \FigCredits { }
+    \file_if_exist:nTF { \l__agl_stem_str .caption.tex }
+      { \file_input:n { \l__agl_stem_str .caption.tex } }
+      {
+        \msg_warning:nne { agl } { missing-caption } { \l__agl_stem_str .caption.tex }
+        \cs_set:Npn \FigTitle { Caption~missing }
+        \cs_set:Npe \FigText
+          {
+            \exp_not:N \placeholder
+              { Title,~text~and~credits~come~from~\l__agl_name_str .caption.tex. }
+          }
+      }
+    \file_if_exist:nTF { \l__agl_stem_str .table.tex }
+      { \bool_set_true:N \l__agl_table_bool }
+      { \bool_set_false:N \l__agl_table_bool }
+  }
+% The table, 92 mm wide, indented by #1.
+\cs_new_protected:Npn \__agl_table:n #1
+  {
+    \bool_if:NT \l__agl_table_bool
+      {
+        \par \addvspace { 4mm }
+        \group_begin:
+          \agl@rag
+          \agl@tablefont
+          \noindent \skip_horizontal:n {#1}
+          \begin{minipage}[t]{\c__agl_side_dim}
+            \file_input:n { \l__agl_stem_str .table.tex }
+          \end{minipage}
+          \par
+        \group_end:
+      }
+  }
+% A graphic at natural size into box #1; a missing one as a placeholder of
+% width #3 and height #4.
+\cs_new_protected:Npn \__agl_graphic:Nnnn #1#2#3#4
+  {
+    \__agl_find:n {#2}
+    \bool_if:NTF \l__agl_found_bool
+      { \hbox_set:Nn #1 { \__agl_includegraphics:w {#2} } }
+      { \hbox_set:Nn #1 { \__agl_placeholder:nn { width = #3 , height = #4 } {#2} } }
+  }
+\cs_generate_variant:Nn \__agl_graphic:Nnnn { NV }
+\cs_generate_variant:Nn \regex_extract_once:nnNTF { nV }
+% File name of a plate graphic, #1 = map or legend: <stem>_#1, or
+% <stem>_#1_<version> if \plateversion is set and that file exists.
+\cs_new_protected:Npn \__agl_platefile:n #1
+  {
+    \str_set:Ne \l__agl_file_str { \l__agl_stem_str _ #1 }
+    \str_if_empty:NF \g__agl_version_str
+      {
+        \exp_args:Ne \__agl_find:n { \l__agl_file_str _ \g__agl_version_str }
+        \bool_if:NTF \l__agl_found_bool
+          { \str_put_right:Ne \l__agl_file_str { _ \g__agl_version_str } }
+          { \msg_info:nnee { agl } { plate-version } { \l__agl_file_str } { \g__agl_version_str } }
+      }
+  }
+% --- plate page
+\NewDocumentCommand \plate { m }
+  {
+    \clearpage
+    \agl@platelayout
+    \group_begin:
+      \thispagestyle { plate }
+      \__agl_stem:Nn \g__agl_platedir_str {#1}
+      \__agl_sidecar:
+      \regex_extract_once:nVNTF { plate(\d+[a-z]?) } \l__agl_name_str \l__agl_match_seq
+        { \tl_set:Ne \l__agl_number_tl { \seq_item:Nn \l__agl_match_seq { 2 } } }
+        { \tl_set:Ne \l__agl_number_tl { \int_eval:n { \value { plate } + 1 } } }
+      \cs_set:Npe \theplate { \l__agl_number_tl }
+      \cs_set_eq:NN \theHplate \theplate
+      \refstepcounter { plate }
+      \tl_set:No \@currentlabelname { \FigTitle }
+      \exp_args:NV \label \l__agl_name_str
+      \addcontentsline { lof } { plate } { \protect \numberline { \theplate } \FigTitle }
+      \__agl_plate_map:
+      \__agl_plate_sidebar:
+      \nointerlineskip
+      \hbox_to_wd:nn { \textwidth }
+        {
+          \box_use_drop:N \l__agl_map_box
+          \skip_horizontal:N \c__agl_gutter_dim
+          \box_use_drop:N \l__agl_top_box
+          \tex_hss:D
+        }
+    \group_end:
+    \clearpage
+    \agl@portrait
+  }
+% The map in a frame of exactly 175 x 175 mm: a file of another size is
+% reported and sticks out, the sidebar stays in place.
+\cs_new_protected:Npn \__agl_plate_map:
+  {
+    \__agl_platefile:n { map }
+    \__agl_graphic:NVnn \l__agl_map_box \l__agl_file_str { 175mm } { 175mm }
+    \bool_lazy_and:nnT { \l__agl_found_bool }
+      {
+        \bool_lazy_or_p:nn
+          { \dim_compare_p:n { \dim_abs:n { \box_wd:N \l__agl_map_box - \c__agl_map_dim } > 0.1mm } }
+          {
+            \dim_compare_p:n
+              { \dim_abs:n { \box_ht:N \l__agl_map_box + \box_dp:N \l__agl_map_box - \c__agl_map_dim } > 0.1mm }
+          }
+      }
+      { \msg_warning:nnee { agl } { plate-map } { \l__agl_file_str } { \__agl_size:N \l__agl_map_box } }
+    \hbox_set_to_wd:Nnn \l__agl_map_box { \c__agl_map_dim }
+      {
+        \vbox_to_ht:nn { \c__agl_map_dim } { \box_use_drop:N \l__agl_map_box \tex_vss:D }
+        \tex_hss:D
+      }
+  }
+% Sidebar: legend, heading, text and table in one box, credits in another;
+% together exactly as high as the map, credits at the foot. Too much
+% content is reported and hangs below the map.
+\cs_new_protected:Npn \__agl_plate_sidebar:
+  {
+    \__agl_platefile:n { legend }
+    \__agl_graphic:NVnn \l__agl_legend_box \l__agl_file_str { 92mm } { 60mm }
+    \bool_lazy_and:nnT { \l__agl_found_bool }
+      {
+        \bool_lazy_or_p:nn
+          { \dim_compare_p:n { \dim_abs:n { \box_wd:N \l__agl_legend_box - \c__agl_side_dim } > 0.1mm } }
+          {
+            \dim_compare_p:n
+              { \box_ht:N \l__agl_legend_box + \box_dp:N \l__agl_legend_box > \c__agl_legend_dim + 0.1mm }
+          }
+      }
+      { \msg_warning:nnee { agl } { plate-legend } { \l__agl_file_str } { \__agl_size:N \l__agl_legend_box } }
+    \dim_set:Nn \l__agl_legend_dim { \box_ht:N \l__agl_legend_box + \box_dp:N \l__agl_legend_box }
+    \vbox_set:Nn \l__agl_top_box
+      {
+        \dim_set_eq:NN \hsize \c__agl_side_dim
+        \dim_set_eq:NN \linewidth \hsize
+        \box_use_drop:N \l__agl_legend_box
+        \nointerlineskip
+        \skip_vertical:N \c__agl_legendgap_dim
+        \dim_zero:N \parindent
+        \agl@platehead
+        \agl@platetext
+        \__agl_table:n { 0pt }
+      }
+    \vbox_set:Nn \l__agl_credits_box
+      {
+        \dim_set_eq:NN \hsize \c__agl_side_dim
+        \agl@credits
+      }
+    \dim_set:Nn \l__agl_excess_dim
+      {
+        \box_ht:N \l__agl_top_box + \box_dp:N \l__agl_top_box + \c__agl_creditgap_dim
+        + \box_ht:N \l__agl_credits_box - \c__agl_map_dim
+      }
+    \dim_compare:nNnTF { \l__agl_excess_dim } > { 0pt }
+      {
+        \msg_warning:nneee { agl } { plate-sidebar } { \theplate }
+          { \fp_eval:n { round ( \dim_to_decimal_in_unit:nn { \l__agl_excess_dim } { 1 mm } , 1 ) } }
+          { \fp_eval:n { ceil ( \dim_to_decimal_in_unit:nn { \l__agl_excess_dim } { 1 mm } / 4.45 ) } }
+        \vbox_set_to_ht:Nnn \l__agl_top_box { \c__agl_map_dim }
+          {
+            \box_use_drop:N \l__agl_top_box
+            \skip_vertical:N \c__agl_creditgap_dim
+            \box_use_drop:N \l__agl_credits_box
+            \tex_vss:D
+          }
+      }
+      {
+        \msg_info:nneee { agl } { plate-room } { \theplate }
+          { \fp_eval:n { round ( \dim_to_decimal_in_unit:nn { \l__agl_legend_dim } { 1 mm } , 1 ) } }
+          { \fp_eval:n { round ( - \dim_to_decimal_in_unit:nn { \l__agl_excess_dim } { 1 mm } , 1 ) } }
+        \vbox_set_to_ht:Nnn \l__agl_top_box { \c__agl_map_dim }
+          {
+            \box_use_drop:N \l__agl_top_box
+            \skip_vertical:n { \c__agl_creditgap_dim plus 1fill }
+            \box_use_drop:N \l__agl_credits_box
+          }
+      }
+  }
+% --- atlas and text figures: graphic at text width, then the caption
+% ("Figure A.1  Title. Text"), with credits and table aligned with its text.
+% A graphic of another width is scaled to the text width.
+\dim_new:N \l__agl_indent_dim
+\cs_new_protected:Npn \__agl_figure:
+  {
+    \captionsetup { type = figure }% links to the figure land on its top edge
+    \__agl_graphic:NVnn \l__agl_map_box \l__agl_stem_str { \linewidth } { \linewidth }
+    \bool_if:NT \l__agl_found_bool
+      {
+        \dim_compare:nNnT { \dim_abs:n { \box_wd:N \l__agl_map_box - \linewidth } } > { 0.1mm }
+          {
+            \msg_warning:nneeee { agl } { figure-width } { \l__agl_stem_str }
+              { \fp_eval:n { round ( \dim_to_decimal_in_unit:nn { \box_wd:N \l__agl_map_box } { 1 mm } , 1 ) } }
+              { \fp_eval:n { round ( \dim_to_decimal_in_unit:nn { \linewidth } { 1 mm } , 1 ) } }
+              { \fp_eval:n { round ( 100 * \linewidth / \box_wd:N \l__agl_map_box ) } }
+            \hbox_set:Nn \l__agl_map_box
+              { \__agl_includegraphics:w [ width = \linewidth ] { \l__agl_stem_str } }
+          }
+      }
+    \par \noindent \box_use_drop:N \l__agl_map_box \par
+    \tl_set:No \l__agl_title_tl { \FigTitle }
+    \use:e { \exp_not:N \caption [ { \exp_not:V \l__agl_title_tl } ] }
+      { { \bfseries \color { ink } \FigTitle . } \enskip \FigText }
+    \exp_args:NV \label \l__agl_name_str
+    % the hanging indent of the caption: label and separator (caption: format=hang)
+    \hbox_set:Nn \l_tmpa_box { \sffamily \small \bfseries \figurename \nobreakspace \thefigure \quad }
+    \dim_set:Nn \l__agl_indent_dim { \box_wd:N \l_tmpa_box }
+    \tl_if_empty:oF { \FigCredits }
+      {
+        \par \skip_vertical:n { 1mm }
+        \group_begin:
+          \agl@rag
+          \dim_set_eq:NN \leftskip \l__agl_indent_dim
+          \sffamily \scriptsize \color { rock } \FigCredits \par
+        \group_end:
+      }
+    \__agl_table:n { \l__agl_indent_dim }
+  }
+\NewDocumentCommand \atlasfig { m }
+  {
+    \par
+    \group_begin:
+      \__agl_stem:Nn \g__agl_atlasdir_str {#1}
+      \__agl_sidecar:
+      \vbox_set:Nn \l__agl_block_box
+        {
+          \dim_set_eq:NN \hsize \textwidth
+          \dim_set_eq:NN \linewidth \textwidth
+          \__agl_figure:
+        }
+      \dim_compare:nNnTF
+        { \box_ht:N \l__agl_block_box + \box_dp:N \l__agl_block_box }
+        > { ( \textheight - \c__agl_atlasgap_dim ) / 2 }
+        {
+          \dim_compare:nNnT
+            { \box_ht:N \l__agl_block_box + \box_dp:N \l__agl_block_box } > { \textheight }
+            {
+              \msg_warning:nneee { agl } { atlas-height } { \l__agl_stem_str }
+                {
+                  \fp_eval:n
+                    {
+                      round ( \dim_to_decimal_in_unit:nn
+                        { \box_ht:N \l__agl_block_box + \box_dp:N \l__agl_block_box } { 1 mm } , 1 )
+                    }
+                }
+                { \fp_eval:n { round ( \dim_to_decimal_in_unit:nn { \textheight } { 1 mm } , 1 ) } }
+            }
+        }
+        {
+          \vbox_set_to_ht:Nnn \l__agl_block_box { ( \textheight - \c__agl_atlasgap_dim ) / 2 }
+            { \box_use_drop:N \l__agl_block_box \tex_vss:D }
+        }
+      \addvspace { \c__agl_atlasgap_dim }
+      \nointerlineskip
+      \box_use_drop:N \l__agl_block_box
+    \group_end:
+    \par
+  }
+\str_const:Nn \c__agl_here_str { . }
+\NewDocumentCommand \sidecarfigure { O{htbp} m }
+  {
+    \begin{figure}[#1]
+      \__agl_stem:Nn \c__agl_here_str {#2}
+      \__agl_sidecar:
+      \__agl_figure:
+    \end{figure}
+  }
+
+% Placeholder for missing images, at the requested size.
+\msg_new:nnn { agl } { missing-file }
+  { File~`#1'~not~found;~drawing~a~#2~mm~placeholder. }
+\dim_new:N \l__agl_wd_dim
+\dim_new:N \l__agl_ht_dim
+\bool_new:N \l__agl_found_bool
+\keys_define:nn { agl / placeholder }
+  {
+    width   .dim_set:N = \l__agl_wd_dim ,
+    height  .dim_set:N = \l__agl_ht_dim ,
+    unknown .code:n    = { } ,
+  }
+\cs_new_protected:Npn \__agl_find:n #1
+  {
+    \bool_set_false:N \l__agl_found_bool
+    \file_if_exist:nTF {#1}
+      { \bool_set_true:N \l__agl_found_bool }
+      {
+        \clist_map_inline:nn { .pdf , .png , .jpg , .jpeg }
+          { \file_if_exist:nT { #1 ##1 } { \bool_set_true:N \l__agl_found_bool \clist_map_break: } }
+      }
+  }
+\cs_new:Npn \__agl_mm:N #1 { \fp_eval:n { round ( \dim_to_decimal_in_unit:nn {#1} { 1 mm } ) } }
+\cs_new_protected:Npn \__agl_placeholder:nn #1#2
+  {
+    \group_begin:
+      \dim_set:Nn \l__agl_wd_dim { \linewidth }
+      \dim_zero:N \l__agl_ht_dim
+      \keys_set:nn { agl / placeholder } {#1}
+      \dim_compare:nNnT { \l__agl_ht_dim } = { \c_zero_dim }
+        { \dim_set:Nn \l__agl_ht_dim { 0.618 \l__agl_wd_dim } }
+      \msg_warning:nnee { agl } { missing-file } {#2}
+        { \__agl_mm:N \l__agl_wd_dim \c_space_tl x \c_space_tl \__agl_mm:N \l__agl_ht_dim }
+      \agl@drawplaceholder { \l__agl_wd_dim } { \l__agl_ht_dim } {#2}
+        { \__agl_mm:N \l__agl_wd_dim \,\texttimes\, \__agl_mm:N \l__agl_ht_dim \,mm }
+    \group_end:
+  }
+\NewCommandCopy \__agl_includegraphics:w \includegraphics
+\RenewDocumentCommand \includegraphics { s O{} m }
+  {
+    \__agl_find:n {#3}
+    \bool_if:NTF \l__agl_found_bool
+      {
+        \IfBooleanTF {#1}
+          { \__agl_includegraphics:w * [#2] {#3} }
+          { \__agl_includegraphics:w [#2] {#3} }
+      }
+      { \__agl_placeholder:nn {#2} {#3} }
+  }
+\ExplSyntaxOff
+% Pale ice field with contour rings, file name and target size in the middle.
+\newcommand\agl@drawplaceholder[4]{%
+  \begin{tikzpicture}
+    \useasboundingbox (0,0) rectangle (#1,#2);
+    \fill[ice] (0,0) rectangle (#1,#2);
+    \begin{scope}
+      \clip (0,0) rectangle (#1,#2);
+      \foreach \k in {1,...,14}
+        \draw[glacier!16, line width=.5pt] (.64*#1,.60*#2) ellipse ({\k*.075*#1} and {\k*.06*#1});
+    \end{scope}
+    \draw[glacier!45, line width=.5pt] (.25pt,.25pt) rectangle ($(#1,#2)-(.25pt,.25pt)$);
+    \node[fill=ice, inner sep=3pt, align=center, text=glacier,
+          font=\sffamily\footnotesize] at (.5*#1,.5*#2)
+      {\texttt{\detokenize{#3}}\\[1pt]{\color{rock}\scriptsize #4\ \textperiodcentered\ missing}};
+  \end{tikzpicture}}
+
+% ---------------------------------------------------------- tables, units
+\RequirePackage{booktabs}
+\RequirePackage{tabularx}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}% ragged-right X column
+% symbols: the variables of the equation above, one row each, not floating:
+%   \begin{symbols} $x$ & meaning & value or unit \\ ... \end{symbols}
+\NewDocumentEnvironment{symbols}{+b}
+  {\par\nopagebreak\smallskip\noindent{\small\addfontfeature{Numbers=Tabular}
+   \begin{tabularx}{\linewidth}{@{} l L l @{}}\toprule #1 \bottomrule\end{tabularx}}%
+   \par\medskip}
+  {}
+\RequirePackage{siunitx}
+% Numbers and units follow the surrounding font: serif in text, sans in
+% tables and captions, math font in formulas.
+\sisetup{
+  mode = match, reset-text-family = false, reset-text-series = false,
+  reset-text-shape = false,
+  per-mode = power, inter-unit-product = \,, group-separator = {\,},
+  list-units = single, range-units = single, product-units = single,
+  uncertainty-mode = separate, retain-explicit-plus}% +0.23 m w.e. stays a gain
+\DeclareSIUnit\annum{a}% per annum, as in m w.e. a^-1
+\DeclareSIUnit\we{w.e.}% water equivalent
+\DeclareSIUnit\mwe{\metre\we}% m w.e.
+\DeclareSIUnit\mwea{\metre\we\per\annum}% m w.e. a^-1
+\DeclareSIUnit\degreeday{(°C\,d)}% literal: siunitx cannot bracket a unit product
+\DeclareSIUnit\ddf{\milli\metre\we\per\degreeday}% mm w.e. (°C d)^-1
+\DeclareSIUnit\kmcubed{\cubic\kilo\metre}% km^3
+\DeclareSIUnit\masl{m~a.s.l.}% metres above sea level
+
+% --------------------------------------------------------------- questions
+% "Question 3.1 [7 pts]" with the question text in a pale box; the answer
+% follows as normal prose, never separated from the box by a page break.
+% Each question is listed in the contents and in the PDF bookmarks.
+\RequirePackage{tcolorbox}
+\NewTColorBox{question}{m m}{%
+  colback=ice, colframe=glacier, coltext=text,
+  boxrule=0pt, leftrule=2pt, arc=0pt, outer arc=0pt, boxsep=0pt,
+  left=3.6mm, right=3.6mm, top=2.8mm, bottom=2.8mm,
+  before skip=1.1\baselineskip plus 3pt,
+  phantom={\phantomsection\addcontentsline{toc}{question}{Question~#1 [#2~pts]}},
+  before upper={\setlength\parindent{0pt}\setlength\parskip{.3\baselineskip}%
+    {\sffamily\bfseries\color{glacier}Question~#1}\enskip{\sffamily\color{rock}[#2~pts]}\par},
+  after={\par\nobreak\nointerlineskip\addvspace{.9\baselineskip}%
+    \@afterindentfalse\@afterheading}}
+
+% converted: closes a question; its results, given in SI in the answer, in the units
+% the assignment asks for. Red, like the accent of the maps.
+\NewTColorBox{converted}{}{%
+  colback=accent!5, colframe=accent, coltext=text,
+  boxrule=0pt, leftrule=2pt, arc=0pt, outer arc=0pt, boxsep=0pt,
+  left=3.6mm, right=3.6mm, top=2.2mm, bottom=2.2mm,
+  before skip=.7\baselineskip, after skip=.7\baselineskip,
+  before upper={\setlength\parindent{0pt}\setlength\parskip{.25\baselineskip}%
+    {\sffamily\bfseries\color{rock}In the units of the assignment}\par}}
+
+% ------------------------------------------------------------------- code
+% Python listings with piton (Lua, no shell escape).
+\RequirePackage{piton}
+\PitonOptions{
+  language = Python, font-command = \ttfamily\footnotesize,
+  background-color = ice!60, left-margin = auto,
+  line-numbers = {true, sep = 1em, format = \color{rock}\tiny},
+  break-lines, indent-broken-lines, splittable = 4}
+\SetPitonStyle{
+  Comment = \color{rock}\itshape, String.Doc = \color{rock}\itshape,
+  String = \color{water!65!black},
+  Keyword = \color{glacier}\bfseries, Keyword.Constant = \color{glacier}\bfseries,
+  Operator.Word = \color{glacier}\bfseries, Name.Builtin = \color{glacier},
+  Name.Function = \color{accent}, Name.Class = \color{accent}\bfseries,
+  Name.Decorator = \color{accent}, Name.Namespace = \color{ink},
+  Number = \color{accent}, Exception = \color{accent}\bfseries,
+  Operator = \color{rock}}
+\AddToHook{env/Piton/before}{\par\addvspace{\medskipamount}}
+\AddToHook{env/Piton/after}{\par\addvspace{\medskipamount}}
+\ExplSyntaxOn
+\NewDocumentCommand \codefile { m }
+  {
+    \par \addvspace { \medskipamount }
+    \noindent { \ttfamily \footnotesize \color{rock} \tl_to_str:n {#1} } \par \nobreak
+    \PitonInputFileTF {#1} { }
+      {
+        \msg_warning:nnee { agl } { missing-file } {#1} { \__agl_mm:N \linewidth \c_space_tl x \c_space_tl 14 }
+        \noindent \agl@drawplaceholder { \linewidth } { 14mm } {#1} { Python~listing }
+      }
+    \par
+  }
+\ExplSyntaxOff
+
+% The appendix starts on a new page; its figures and tables are numbered
+% per appendix: Figure A.1, Table B.2.
+\NewCommandCopy\agl@appendix\appendix
+\renewcommand*\appendix{\clearpage\agl@appendix
+  \counterwithin{figure}{section}\counterwithin{table}{section}}
+
+% -------------------------------------------------- unfinished-text marker
+\newcounter{agl@placeholders}
+\NewDocumentCommand\placeholder{m}{\leavevmode\stepcounter{agl@placeholders}{\color{rock}\itshape #1}}
+\AtEndDocument{\ifnum\value{agl@placeholders}>0
+  \PackageWarningNoLine{agl}{\arabic{agl@placeholders} placeholder(s) left in the text}\fi}
+% \unv{text}: text written by Claude that the group has not read yet: blue,
+% counted in the log. Accept one passage by deleting its \unv{...}; accept all
+% with \renewcommand\unv[1]{#1} in main.tex.
+\newcounter{agl@unv}
+\NewDocumentCommand\unv{+m}{\leavevmode\stepcounter{agl@unv}{\color{blue!70!black}#1}}
+\AtEndDocument{\ifnum\value{agl@unv}>0
+  \PackageWarningNoLine{agl}{\arabic{agl@unv} unread passage(s) (\string\unv) left in the text}\fi}
+% \req{text}: a request of the assignment sheet outside its marked questions, copied into
+% the question box and highlighted as in data/course/*_highlighted.pdf
+\RequirePackage{luacolor}\RequirePackage{lua-ul}
+\NewDocumentCommand\req{m}{\highLight[yellow!55]{#1}}
+
+% ------------------------------------------------------------ bibliography
+\RequirePackage[backend=biber, style=authoryear, maxcitenames=2, maxbibnames=99,
+  giveninits=true, uniquename=init, uniquelist=false, dashed=false,
+  doi=true, url=true, isbn=false, eprint=false, date=year, urldate=ymd]{biblatex}
+\DeclareNameAlias{sortname}{family-given}
+\DeclareFieldFormat[article]{title}{#1}% no quotes; other titles stay italic
+\DeclareFieldFormat[article]{volume}{#1}
+\DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
+\DeclareFieldFormat[article]{pages}{#1}
+\DeclareFieldFormat{doi}{\url{https://doi.org/#1}}
+\DeclareFieldFormat{url}{\url{#1}}
+\DeclareFieldFormat{urldate}{\mkbibparens{accessed\space#1}}
+\renewbibmacro{in:}{\ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
+\renewbibmacro*{volume+number+eid}{%
+  \printfield{volume}\printfield{number}\setunit{\addcomma\space}\printfield{eid}}
+\renewcommand*\bibfont{\small\raggedright}% long URLs move to the next line whole
+\DefineBibliographyExtras{british}{\renewcommand*\bibdatesep{-}}% 2026-09-30
+\setlength\bibitemsep{.35\baselineskip}
+\setcounter{biburlnumpenalty}{8000}
+\setcounter{biburllcpenalty}{8000}
+\setcounter{biburlucpenalty}{8000}
+
+% --------------------------------------------------------- links and refs
+\RequirePackage{hyperref}
+\hypersetup{colorlinks, linkcolor=text, citecolor=text, urlcolor=glacier,
+  filecolor=glacier, bookmarksnumbered, bookmarksopen, bookmarksopenlevel=1,
+  bookmarksdepth=2,
+  pdfdisplaydoctitle, pdflang=en-GB}
+\AtBeginDocument{\hypersetup{pdftitle={\@title},
+  pdfsubject={Applied Glaciology, Assignment 1, Fall Semester 2026},
+  pdfauthor={\agl@names{, }}}}
+\urlstyle{same}
+\RequirePackage[capitalise, noabbrev]{cleveref}
+\crefname{plate}{Plate}{Plates}
+\newcommand*\crefrangeconjunction{--}% Plates 1--5
+
+\endinput

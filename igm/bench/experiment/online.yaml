@@ -1,0 +1,43 @@
+# @package _global_
+# Benchmark, online solver: IGM default (DahuNet trained from scratch at start,
+# retrained 5 iterations every 5 steps); valid at any grid spacing.
+defaults:
+  - override /inputs: [local]
+  - override /processes: [smb, iceflow, time, thk]
+  - override /outputs: [local]
+
+inputs:
+  local:
+    filename: synth_dx20.nc
+processes:
+  smb:
+    method: simple
+    simple:
+      update_freq: 1.0          # mass balance recomputed once per year
+      array:
+        - ["time", "gradabl", "gradacc", "ela", "accmax"]
+        - [2000, 0.009, 0.005, 2950, 2.0]
+        - [2100, 0.009, 0.005, 3150, 2.0]
+  time:
+    start: 2000.0
+    end: 2100.0
+    save: 10.0
+  iceflow:
+    method: unified
+    numerics:
+      Nz: 4
+      basis_horizontal: central
+      basis_vertical: Lagrange
+    unified:
+      mapping: network
+      inputs: [thk, usurf, arrhenius, tau_ref, dX]
+      optimizer: adam
+      nbit_init: 300
+      nbit: 5
+      retrain_freq: 5
+      network:
+        pretrained: false
+        architecture: dahunet
+outputs:
+  local:
+    vars_to_save: [thk, velsurf_mag]

@@ -1,0 +1,4 @@
+warmstart:
+  net: ""                          # weights file of track save_net (start directory); "" = cold start
+  nbit: 300                        # training iterations from the loaded weights (gate 3b: 0 reproduces the
+                                   # network's own start state; another u, f needs about 300)

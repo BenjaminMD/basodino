@@ -1,0 +1,12 @@
+triangle,column_px,row_px,balance_mwe,note
+1,122.5,313,-3.75,"last digit crossed by the 3000 contour label; reads 5"
+2,176,379,,"-2.9 then a digit hidden under the label of triangle 4"
+3,185,277,-3.84,"minus under the 2950 contour label"
+4,197,378,,"-?.34: first digit hidden under triangle 2's label"
+5,236,240.5,-4.00,
+6,242,352,-3.29,
+7,298,297,-3.95,"triangle hidden under the 2900 contour label; position from label place"
+8,402,397,-3.07,
+9,442,335,-3.45,
+10,454,274,-3.79,"last digit crossed by the 2750 contour label; reads 9"
+11,576,312,-4.00,

@@ -1,0 +1,21 @@
+case,end,value,low,high,note
+gate u=0 no melt,2021-09-30,1.3786,,,"km2, expected 1.379"
+volume u=0,2021-09-30,0.014174,,,km3
+"area u=0, k 0.856, emergence 0.0",2025-09-06,0.918,,,observed 1.237 +- 0.084
+"u_match, k 0.856, emergence 0.0",2025-09-06,0.42,0.3,0.58,
+"volume at u_match, k 0.856, emergence 0.0",2025-09-06,0.0216,,,km3
+"area u=0, k 0.856, emergence 0.0",2026-09-29,0.6,,,observed 1.025 +- 0.092
+"u_match, k 0.856, emergence 0.0",2026-09-29,0.41,0.31,0.55,
+"volume at u_match, k 0.856, emergence 0.0",2026-09-29,0.0214,,,km3
+"area u=0, k 0.77, emergence 0.0",2025-09-06,0.983,,,observed 1.237 +- 0.084
+"u_match, k 0.77, emergence 0.0",2025-09-06,0.34,0.22,0.51,
+"volume at u_match, k 0.77, emergence 0.0",2025-09-06,0.0201,,,km3
+"area u=0, k 0.77, emergence 0.0",2026-09-29,0.718,,,observed 1.025 +- 0.092
+"u_match, k 0.77, emergence 0.0",2026-09-29,0.31,0.21,0.45,
+"volume at u_match, k 0.77, emergence 0.0",2026-09-29,0.0196,,,km3
+"area u=0, k 0.856, emergence 0.33",2025-09-06,1.014,,,observed 1.237 +- 0.084
+"u_match, k 0.856, emergence 0.33",2025-09-06,0.31,0.19,0.47,
+"volume at u_match, k 0.856, emergence 0.33",2025-09-06,0.0196,,,km3
+"area u=0, k 0.856, emergence 0.33",2026-09-29,0.77,,,observed 1.025 +- 0.092
+"u_match, k 0.856, emergence 0.33",2026-09-29,0.28,0.17,0.41,
+"volume at u_match, k 0.856, emergence 0.33",2026-09-29,0.0191,,,km3

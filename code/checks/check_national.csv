@@ -1,0 +1,5 @@
+sgi_id,area_km2,V_year_km3,year,end,dV_km3,loss_over_map,sigma
+A55b-16,0.7318,0.008435,2011,20230823,-0.008844,1.0485,0.1634
+C14-10,1.641,0.02268,2012,20240823,-0.020539,0.9056,0.1306
+count above 0.5 km2 with a pair,237,,,,,,
+"the same, pairs of at least 6 years",230,,,,,,

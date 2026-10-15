@@ -1,0 +1,39 @@
+quantity,value,unit,definition
+reference_year,2012,,"most common year of the surface the thickness refers to, on the ice cells"
+A_2012,1.6406e+06,m2,"cells with a thickness x 100 m2: outline of the Swiss Glacier Inventory 2016 (imagery 2018), not the glacier area of 2012"
+V_2012,2.2682e+07,m3,sum of the thickness x 100 m2
+H_2012_mean,13.8254,m,V_2012 / A_2012
+V_2012_low,6.49258e+06,m3,every cell at thickness + uncertainty minus (at least 0)
+V_2012_high,4.26096e+07,m3,every cell at thickness + uncertainty plus
+H_2012_max,25.2246,m,thickest cell
+H_2012_max_easting,2679165,m,"its centre, Swiss coordinates"
+H_2012_max_northing,1140915,m,"its centre, Swiss coordinates"
+H_2012_max_surface,3106.95,m,surface elevation of the reference year there
+A_2021,1.6065e+06,m2,cells of mask 2021 x 100 m2 (Task 1)
+A_2021_without_bed,15200,m2,part of A_2021 outside the outline: thickness 0
+V_2021,1.41744e+07,m3,"sum over mask 2021 of max(z_2021 - bed, 0) x 100 m2"
+H_2021_mean,8.82318,m,V_2021 / A_2021
+H_2021_max,23.9596,m,"thickest cell of mask 2021, z_2021 - bed"
+H_2021_max_easting,2679155,m,"its centre, Swiss coordinates"
+H_2021_max_northing,1140925,m,"its centre, Swiss coordinates"
+A_1994,2.3971e+06,m2,cells of mask 1994 x 100 m2 (Task 1)
+V_1994,6.37163e+07,m3,"sum over mask 1994 of max(z_1994 - ground, 0) x 100 m2; ground: bed, at most z_2021, z_2021 off the outline"
+H_1994_mean,26.5806,m,V_1994 / A_1994
+bed_above_2021_area,256700,m2,cells with a bed above the 2021 surface x 100 m2
+bed_above_2021_in_mask,212700,m2,the part of bed_above_2021_area in mask 2021
+bed_above_2021_max,24.83,m,largest height of the bed above the 2021 surface
+bed_above_2021_volume,1.86346e+06,m3,sum of (bed - z_2021) there x 100 m2; V_2012 is too small by at least this
+V_scaling_2012,6.71595e+07,m3,c A_2012^gamma
+ratio_2012,0.337734,,V_2012 / V_scaling_2012
+ratio_2012_high,0.634453,,V_2012_high / V_scaling_2012
+V_scaling_2021,6.52477e+07,m3,c A_2021^gamma (Task 5)
+ratio_2021,0.217241,,V_2021 / V_scaling_2021
+V_scaling_1994,1.13122e+08,m3,c A_1994^gamma
+ratio_1994,0.563253,,V_1994 / V_scaling_1994
+stable_cells,11372,,ice-free cells: outside both masks and the outline of the data
+dz_stable_mean,0.55649,m,mean of z_2021 - surface of the reference year there
+dz_stable_median,0.656655,m,median of the same
+dz_stable_std,2.93239,m,standard deviation of the same
+shift_east,-0.132624,m,"displacement of the data's surface, least squares on the ice-free cells"
+shift_north,0.0586477,m,"the same, northward"
+V_2021_offset_removed,1.34118e+07,m3,V_2021 with z_2021 lowered by dz_stable_mean

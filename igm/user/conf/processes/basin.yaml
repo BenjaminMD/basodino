@@ -1,0 +1,2 @@
+basin:
+  cells: posbal                    # F2 (DESIGN.md fix round): ice only on the posbal cells of the geometry module

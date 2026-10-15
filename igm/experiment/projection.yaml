@@ -1,0 +1,33 @@
+# @package _global_
+# Projection, DESIGN.md step 6 (decisions 12-14; projection.py): from a draw's 2026-09-30 start state
+# (inputs.geometry.restart = inputs/start2026/dNNN.npz: topg, thk_end) 2026.75 to 2100.75 under one member's scenario
+# weather (clim_otl.scenario), stop at no ice (track). Per run (projection.py members): restart, u (for the record),
+# the balance draw (clim_otl.*, smb_ti.Fm), f (arrhenius, tau_ref), scenario station, chain, ssp, level, seed.
+# Network training (stage s6_nets): cold 3000 iterations, time.end = time.start, outputs.track.save_net.
+# Members: processes.iceflow.unified.nbit_init=0 processes.warmstart.net=<npz> processes.warmstart.nbit=0 (the
+# network of their own start state, gate 3b); film members outputs.track.yearly=true.
+# F2 of the fix round (DESIGN.md): process basin after thk, ice only on the posbal cells (user/code/processes/basin).
+defaults:
+  - common: online
+  - /user/conf/inputs@inputs: [geometry]
+  - /user/conf/processes@processes: [clim_otl, smb_ti, warmstart, basin]
+  - /user/conf/outputs@outputs: [track]
+  - override /inputs: [geometry]
+  - override /processes: [clim_otl, smb_ti, iceflow, warmstart, time, thk, basin]
+  - override /outputs: [track]
+
+inputs:
+  geometry:
+    dem: restart
+processes:
+  clim_otl:
+    cycle: null
+    offset: 0.0
+    scenario:
+      file: inputs/forcing_scen.npz
+  time:
+    start: 2026.75
+    end: 2100.75
+outputs:
+  track:
+    topg: false

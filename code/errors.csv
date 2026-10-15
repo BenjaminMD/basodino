@@ -1,0 +1,24 @@
+quantity,value,sigma,unit,definition
+B_rate,-0.779147,0.101707,m w.e. a-1,"Question 1, mean area; quadrature of elevation models 10.8 %, density 7.1 %, area 1.8 %, dates 0.1 %"
+dV,-0.0495433,0.00536768,km3,elevation models alone
+A_1994,2.3971,0.0461,km2,half a cell along 9.22 km of outline
+A_2021,1.6065,0.0544,km2,half a cell along 10.88 km of outline
+B_total,-21.037,2.74609,m w.e.,27 years
+glamos_1991_2021,-0.69,0.213,m w.e. a-1,"GLAMOS, its own uncertainty, for comparison"
+F,3.84929,1.6878,mm w.e. (K d)-1,"Question 3; lapse rate 1.56, snow threshold 0.187, precipitation 0.59, geodetic balance 0.195"
+cumulative,-10.2476,20.3494,m w.e.,"Question 4 (i); lapse rate 14.8, snow threshold 5.46, precipitation 10.8, geodetic balance 6.96"
+mean,-0.112611,0.22362,m w.e. a-1,"Question 4 (ii); lapse rate 0.163, snow threshold 0.06, precipitation 0.118, geodetic balance 0.0765"
+mean_1935_1965,0.377004,0.397655,m w.e. a-1,"Question 4; lapse rate 0.313, snow threshold 0.12, precipitation 0.205, geodetic balance 0.0579"
+mean_1966_1995,0.165935,0.272636,m w.e. a-1,"Question 4; lapse rate 0.195, snow threshold 0.0611, precipitation 0.167, geodetic balance 0.0658"
+mean_1996_2025,-0.897094,0.111378,m w.e. a-1,"Question 4, 5.2; lapse rate 0.0253, snow threshold 0.00337, precipitation 0.0203, geodetic balance 0.106"
+trend_1986_2025,-0.325612,0.111083,m w.e. a-1 per decade,"Question 4; lapse rate 0.0923, snow threshold 0.0234, precipitation 0.0555, geodetic balance 0.0135"
+B_2022_2025,-5.88392,1.05152,m w.e.,"Question 5.2; lapse rate 0.77, snow threshold 0.129, precipitation 0.475, geodetic balance 0.52"
+t_half,2038.81,7.4991,year,"Question 5.2, area constant; lapse rate 1.22, snow threshold 0.194, precipitation 0.843, geodetic balance 2.25, scaling volume 7"
+trend_1986_2025_se,-0.325612,0.0711653,m w.e. a-1 per decade,standard error of the fitted slope alone
+V_2021,0.0652477,0.0224046,km3,"Question 5.1; scaling constant 34.0 %, exponent 1.2 %, area 4.7 %"
+H_2021,40.6148,13.9462,m,mean thickness from scaling
+year_rmse,0.549699,0.0683326,m w.e.,root mean square of model minus measured over the 34 years 1992-2025; bias +0.055
+r_measured,0.775872,0.0737506,,"correlation with the measured years, 95 % interval 0.59 to 0.88"
+cumulative_measured,-48.09,7.40988,m w.e.,"GLAMOS geodetic chain 1935-2025, glaciological 2020, 2021, 2025; model -10.2"
+bias_before_1962,1.12696,nan,m w.e. a-1,"model minus measured, 1935-1961: model 10.5, measured -20.0 m w.e."
+dV_1907_1991_measured,-0.163739,0.040465,km3,"GLAMOS chain of six pairs, supplement S3"

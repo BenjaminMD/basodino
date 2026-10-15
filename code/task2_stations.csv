@@ -1,0 +1,4 @@
+station,name,elevation_m,distance_km,side,T_1991_2020_degC,P_1991_2020_mm_per_a,r_Pwinter_Bw,r_Tsummer_Bs,n_glamos_years
+GRH,Grimsel Hospiz,1980,20.4,north,2.32333,1840.06,0.531365,-0.858703,34
+ANT,Andermatt,1435,25.2,north,3.89028,1276.81,0.702164,-0.842826,34
+OTL,Locarno / Monti,367,36.3,south,12.8683,1856.75,0.669136,-0.874117,34

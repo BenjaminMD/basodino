@@ -1,0 +1,35 @@
+# @package _global_
+# Check without ice flow (CPU): clim_otl, smb_ti, time and thk only (ubar = vbar = 0 from the geometry module), so
+# thk = max(thk + dt smb, 0) cell by cell, the model of noflow.py; time steps of one year (step_max 1).
+defaults:
+  - /user/conf/inputs@inputs: [geometry]
+  - /user/conf/processes@processes: [clim_otl, smb_ti]
+  - /user/conf/outputs@outputs: [track]
+  - override /inputs: [geometry]
+  - override /processes: [clim_otl, smb_ti, time, thk]
+  - override /outputs: [track]
+
+inputs:
+  geometry:
+    dem: 2021
+    u: 0.0
+processes:
+  clim_otl:
+    dT: -2.4563
+    dg: 0.0015805
+    b: -0.00013046
+    c_prec: 2.7247
+  smb_ti:
+    Fm: 0.001047871
+  time:
+    start: 2021.75
+    end: 2026.75
+    save: 1.0
+    cfl: 0.3
+    step_max: 1.0
+core:
+  print_comp: false              # its pie chart fails on one-iteration runs; timing is in track series.csv
+  print_info: false
+outputs:
+  track:
+    dates: ['2024-08-23', '2025-09-07', '2026-09-27']

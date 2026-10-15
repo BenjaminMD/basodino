@@ -1,0 +1,38 @@
+# @package _global_
+# Decisions 1 and 9 (DESIGN.md): online DahuNet solver (IGM default, as bench/experiment/online.yaml), cfl 0.3 at
+# percentile 100, time.save 1 (every save on 1 October), flow law A = 78 f MPa-3 a-1 and Weertman tau_ref =
+# 0.2154 f^(-1/3) MPa at 100 m a-1, here f = 1 (override arrhenius and tau_ref per run).
+# Cold start: 3000 training iterations (gate 3b, 2026-10-08: 300 left the p90 surface speed 14-20 % below the
+# reference L-BFGS solve on the 1991 and 2021 states; 3000 within 8 %). Warm start (decision 1): the warmstart
+# process (fit.yaml).
+processes:
+  iceflow:
+    method: unified
+    physics:
+      viscosity:
+        arrhenius: 78.0
+      sliding:
+        tau_ref: 0.2153697218796329
+        u_ref: 100.0
+    numerics:
+      Nz: 4
+      basis_horizontal: central
+      basis_vertical: Lagrange
+    unified:
+      mapping: network
+      inputs: [thk, usurf, arrhenius, tau_ref, dX]
+      optimizer: adam
+      nbit_init: 3000
+      nbit: 5
+      retrain_freq: 5
+      network:
+        pretrained: false
+        architecture: dahunet
+  time:
+    save: 1.0
+    cfl: 0.3
+    step_max: 1.0
+    cfl_percentile: 100.0
+core:
+  print_comp: false              # its pie chart fails on one-iteration runs; timing is in track series.csv
+  print_info: false

@@ -1,0 +1,57 @@
+quantity,SI,SI_unit,assignment,assignment_unit
+dV,-4.95433e+07,m3,-0.0495433,km3
+A_1994,2.3971e+06,m2,2.3971,km2
+A_2021,1.6065e+06,m2,1.6065,km2
+A_mean,2.0018e+06,m2,2.0018,km2
+dt,8.52055e+08,s,27,a
+B_rate,-2.46897e-05,kg m-2 s-1,-0.779147,m w.e. a-1
+B_total,-21037,kg m-2,-21.037,m w.e.
+B_rate_A1994,-2.06182e-05,kg m-2 s-1,-0.65066,m w.e. a-1
+B_rate_A2021,-3.07649e-05,kg m-2 s-1,-0.970867,m w.e. a-1
+glamos_B_rate,-2.18648e-05,kg m-2 s-1,-0.69,m w.e. a-1
+lapse_rate,0.0065,K m-1,6.5,degC km-1
+P_mean_station,5.97986e-05,kg m-2 s-1,1887.1,mm a-1
+month,2.628e+06,s,30.4167,d
+F,4.4552e-05,kg m-2 s-1 K-1,3.84929,mm w.e. (degC d)-1
+h,14.8804,W m-2 K-1,3.84929,mm w.e. (degC d)-1
+F_GRH,6.71163e-05,kg m-2 s-1 K-1,5.79885,mm w.e. (degC d)-1
+h_GRH,22.4169,W m-2 K-1,5.79885,mm w.e. (degC d)-1
+F_ANT,8.09454e-05,kg m-2 s-1 K-1,6.99368,mm w.e. (degC d)-1
+h_ANT,27.0358,W m-2 K-1,6.99368,mm w.e. (degC d)-1
+C_mean_year,1232.33,kg m-2,1.23233,m w.e.
+S_mean_year,4.51491e+07,K s,522.559,degC d
+T_excess_OTL,1.43069,K,522.559,degC d a-1
+T_excess_GRH,1.07547,K,392.815,degC d a-1
+lit_aletsch_snow,6.13426e-05,kg m-2 s-1 K-1,5.3,mm w.e. (degC d)-1
+lit_aletsch_ice,0.000135417,kg m-2 s-1 K-1,11.7,mm w.e. (degC d)-1
+lit_braithwaite_low,4.05093e-05,kg m-2 s-1 K-1,3.5,mm w.e. (degC d)-1
+lit_braithwaite_high,5.32407e-05,kg m-2 s-1 K-1,4.6,mm w.e. (degC d)-1
+lit_braithwaite_sd,1.62037e-05,kg m-2 s-1 K-1,1.4,mm w.e. (degC d)-1
+lit_aletsch_snow_h,20.4884,W m-2 K-1,5.3,mm w.e. (degC d)-1
+lit_aletsch_ice_h,45.2292,W m-2 K-1,11.7,mm w.e. (degC d)-1
+lit_braithwaite_low_h,13.5301,W m-2 K-1,3.5,mm w.e. (degC d)-1
+lit_braithwaite_high_h,17.7824,W m-2 K-1,4.6,mm w.e. (degC d)-1
+lit_braithwaite_sd_h,5.41204,W m-2 K-1,1.4,mm w.e. (degC d)-1
+snow_winter_model,880,kg m-2,0.88,m w.e.
+snow_winter_glamos,1469.47,kg m-2,1.46947,m w.e.
+june1942_melt,4.6833,kg m-2,0.0046833,m w.e.
+B_2022_model,-2256.94,kg m-2,-2.25694,m w.e.
+B_2022_glamos,-3512,kg m-2,-3.512,m w.e.
+cumulative,-10247.6,kg m-2,-10.2476,m w.e.
+mean,-3.56843e-06,kg m-2 s-1,-0.112611,m w.e. a-1
+mean_1935_1965,1.19465e-05,kg m-2 s-1,0.377004,m w.e. a-1
+mean_1966_1995,5.25816e-06,kg m-2 s-1,0.165935,m w.e. a-1
+mean_1996_2025,-2.84272e-05,kg m-2 s-1,-0.897093,m w.e. a-1
+trend,-2.13251e-14,kg m-2 s-2,-0.212373,m w.e. a-1 per decade
+B_1977_model,2326.54,kg m-2,2.32654,m w.e.
+geodetic_1950_1961_model,1.60379e-05,kg m-2 s-1,0.506117,m w.e. a-1
+geodetic_1950_1961_glamos,-1.0869e-05,kg m-2 s-1,-0.343,m w.e. a-1
+c,0.191196,m^(3-2 gamma),0.034,km^(3-2 gamma)
+V_2021,6.52477e+07,m3,0.0652477,km3
+B_2022_2025,-5883.92,kg m-2,-5.88392,m w.e.
+dV_2021_2025,-1.05028e+07,m3,-0.0105028,km3
+V_2025,5.47449e+07,m3,0.0547449,km3
+B_future,-2.84272e-05,kg m-2 s-1,-0.897094,m w.e. a-1
+B_recent,-4.12081e-05,kg m-2 s-1,-1.30043,m w.e. a-1
+dV_per_time,-0.0507425,m3 s-1,-0.00160131,km3 a-1
+thinning,-3.15858e-08,m s-1,-0.996771,m ice a-1

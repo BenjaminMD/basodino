@@ -1,0 +1,16 @@
+clim_otl:
+  file: inputs/forcing_obs.npz     # pack_inputs.py
+  cycle: null                      # [y0, y1]: repeat these hydrological years (spin-up 1865-1894)
+  dT: 0.0                          # degC      calibrated transfer (results/calib_draws.csv), MAP in the experiments
+  dg: 0.0                          # K m-1     added to g_m
+  b: 0.0002                        # m-1       precipitation gradient
+  c_prec: 1.0                      # precipitation factor
+  offset: 0.0                      # degC      extra temperature change (dT_1850 of the spin-up)
+  dT_pre: 0.0                      # degC      F1: added in the model's hydrological years up to 1991
+  scenario:                        # decision 12 (projection.py): file "" = observed weather
+    file: ""                       # inputs/forcing_scen.npz
+    station: OTL                   # OTL | ROE: whose CH2025 changes
+    chain: ""                      # CH2025 chain name
+    ssp: SSP2-4.5
+    level: anchored                # native | anchored (2026 level)
+    seed: 0                        # year order

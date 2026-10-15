@@ -1,0 +1,13 @@
+station,approach,target,DDF_mm_per_degCd,C_mean_mwe,S_mean_degCd,ELA_m,AAR
+GRH,distributed,specific,5.79885,1.49873,392.815,3055.78,0.09169
+GRH,distributed,mass,6.28692,1.49873,392.815,3076.79,0.0615002
+GRH,lumped,specific,5.88477,1.49966,387.239,nan,nan
+GRH,lumped,mass,6.37986,1.49966,387.239,nan,nan
+ANT,distributed,specific,6.99368,1.04512,260.845,3053.42,0.0952381
+ANT,distributed,mass,7.72867,1.04512,260.845,3081.12,0.0566449
+ANT,lumped,specific,7.13409,1.04627,255.872,nan,nan
+ANT,lumped,mass,7.88337,1.04627,255.872,nan,nan
+OTL,distributed,specific,3.84929,1.23233,522.559,3105.46,0.0270153
+OTL,distributed,mass,4.21617,1.23233,522.559,3136.22,0.0054155
+OTL,lumped,specific,3.89891,1.24116,518.173,nan,nan
+OTL,lumped,mass,4.2689,1.24116,518.173,nan,nan

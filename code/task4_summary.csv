@@ -1,0 +1,145 @@
+station,quantity,value,unit
+GRH,cumulative,-8.09526,m w.e.
+GRH,mean,-0.0889588,m w.e. a-1
+GRH,std,0.978598,m w.e. a-1
+GRH,positive_years,43,
+GRH,mean_1935_1965,0.45505,m w.e. a-1
+GRH,mean_1966_1995,0.277468,m w.e. a-1
+GRH,mean_1996_2025,-1.01753,m w.e. a-1
+GRH,trend,-0.250284,m w.e. a-1 per decade
+GRH,trend_p,2.05291e-13,
+GRH,trend_1966_2025,-0.433563,m w.e. a-1 per decade
+GRH,lowest_1,2023: -3.07,m w.e.
+GRH,lowest_2,2022: -2.29,m w.e.
+GRH,lowest_3,2003: -2.18,m w.e.
+GRH,lowest_4,2025: -2.14,m w.e.
+GRH,lowest_5,1947: -1.72,m w.e.
+GRH,highest_1,1948: 1.83,m w.e.
+GRH,highest_2,1965: 1.73,m w.e.
+GRH,highest_3,1940: 1.73,m w.e.
+GRH,highest_4,1954: 1.49,m w.e.
+GRH,highest_5,1978: 1.46,m w.e.
+GRH,glamos_n,34,years
+GRH,glamos_r,0.73706,
+GRH,glamos_bias,-0.0435616,m w.e. a-1
+GRH,glamos_rmse,0.600286,m w.e. a-1
+GRH,glamos_mean_obs,-0.860912,m w.e. a-1
+GRH,glamos_mean_mod,-0.904473,m w.e. a-1
+GRH,glamos_std_obs,0.878368,m w.e. a-1
+GRH,glamos_std_mod,0.777479,m w.e. a-1
+GRH,geodetic_1930_1949_glamos,-1.057,m w.e. a-1
+GRH,geodetic_1930_1949_model,0.444685,m w.e. a-1
+GRH,geodetic_1950_1961_glamos,-0.343,m w.e. a-1
+GRH,geodetic_1950_1961_model,0.500504,m w.e. a-1
+GRH,geodetic_1962_1971_glamos,0.422,m w.e. a-1
+GRH,geodetic_1962_1971_model,0.478853,m w.e. a-1
+GRH,geodetic_1972_1985_glamos,0.136,m w.e. a-1
+GRH,geodetic_1972_1985_model,0.405546,m w.e. a-1
+GRH,geodetic_1986_1991_glamos,-0.908,m w.e. a-1
+GRH,geodetic_1986_1991_model,-0.0809447,m w.e. a-1
+GRH,geodetic_1992_2002_glamos,-0.363,m w.e. a-1
+GRH,geodetic_1992_2002_model,-0.23619,m w.e. a-1
+GRH,geodetic_2003_2008_glamos,-1.51,m w.e. a-1
+GRH,geodetic_2003_2008_model,-0.934292,m w.e. a-1
+GRH,geodetic_2009_2014_glamos,-0.485,m w.e. a-1
+GRH,geodetic_2009_2014_model,-0.750518,m w.e. a-1
+GRH,geodetic_2015_2019_glamos,-0.823,m w.e. a-1
+GRH,geodetic_2015_2019_model,-1.39609,m w.e. a-1
+GRH,geodetic_2022_2024_glamos,-1.989,m w.e. a-1
+GRH,geodetic_2022_2024_model,-2.19319,m w.e. a-1
+ANT,cumulative,-13.9673,m w.e.
+ANT,mean,-0.153486,m w.e. a-1
+ANT,std,0.899426,m w.e. a-1
+ANT,positive_years,45,
+ANT,mean_1935_1965,0.257308,m w.e. a-1
+ANT,mean_1966_1995,0.267011,m w.e. a-1
+ANT,mean_1996_2025,-0.998472,m w.e. a-1
+ANT,trend,-0.217507,m w.e. a-1 per decade
+ANT,trend_p,9.60009e-12,
+ANT,trend_1966_2025,-0.438952,m w.e. a-1 per decade
+ANT,lowest_1,2023: -2.70,m w.e.
+ANT,lowest_2,2022: -2.63,m w.e.
+ANT,lowest_3,2003: -2.37,m w.e.
+ANT,lowest_4,2025: -1.94,m w.e.
+ANT,lowest_5,2018: -1.94,m w.e.
+ANT,highest_1,1940: 1.32,m w.e.
+ANT,highest_2,1981: 1.28,m w.e.
+ANT,highest_3,1936: 1.27,m w.e.
+ANT,highest_4,1954: 1.20,m w.e.
+ANT,highest_5,1978: 1.20,m w.e.
+ANT,glamos_n,34,years
+ANT,glamos_r,0.703493,
+ANT,glamos_bias,-0.055564,m w.e. a-1
+ANT,glamos_rmse,0.649615,m w.e. a-1
+ANT,glamos_mean_obs,-0.860912,m w.e. a-1
+ANT,glamos_mean_mod,-0.916476,m w.e. a-1
+ANT,glamos_std_obs,0.878368,m w.e. a-1
+ANT,glamos_std_mod,0.822643,m w.e. a-1
+ANT,geodetic_1930_1949_glamos,-1.057,m w.e. a-1
+ANT,geodetic_1930_1949_model,0.211857,m w.e. a-1
+ANT,geodetic_1950_1961_glamos,-0.343,m w.e. a-1
+ANT,geodetic_1950_1961_model,0.253924,m w.e. a-1
+ANT,geodetic_1962_1971_glamos,0.422,m w.e. a-1
+ANT,geodetic_1962_1971_model,0.432696,m w.e. a-1
+ANT,geodetic_1972_1985_glamos,0.136,m w.e. a-1
+ANT,geodetic_1972_1985_model,0.460409,m w.e. a-1
+ANT,geodetic_1986_1991_glamos,-0.908,m w.e. a-1
+ANT,geodetic_1986_1991_model,0.0325448,m w.e. a-1
+ANT,geodetic_1992_2002_glamos,-0.363,m w.e. a-1
+ANT,geodetic_1992_2002_model,-0.232774,m w.e. a-1
+ANT,geodetic_2003_2008_glamos,-1.51,m w.e. a-1
+ANT,geodetic_2003_2008_model,-0.885994,m w.e. a-1
+ANT,geodetic_2009_2014_glamos,-0.485,m w.e. a-1
+ANT,geodetic_2009_2014_model,-0.630058,m w.e. a-1
+ANT,geodetic_2015_2019_glamos,-0.823,m w.e. a-1
+ANT,geodetic_2015_2019_model,-1.63791,m w.e. a-1
+ANT,geodetic_2022_2024_glamos,-1.989,m w.e. a-1
+ANT,geodetic_2022_2024_model,-2.35312,m w.e. a-1
+OTL,cumulative,-10.2476,m w.e.
+OTL,mean,-0.112611,m w.e. a-1
+OTL,std,0.856886,m w.e. a-1
+OTL,positive_years,40,
+OTL,mean_1935_1965,0.377004,m w.e. a-1
+OTL,mean_1966_1995,0.165935,m w.e. a-1
+OTL,mean_1996_2025,-0.897093,m w.e. a-1
+OTL,trend,-0.212373,m w.e. a-1 per decade
+OTL,trend_p,1.94753e-12,
+OTL,trend_1966_2025,-0.353507,m w.e. a-1 per decade
+OTL,lowest_1,2022: -2.26,m w.e.
+OTL,lowest_2,2003: -2.10,m w.e.
+OTL,lowest_3,2018: -1.99,m w.e.
+OTL,lowest_4,2023: -1.69,m w.e.
+OTL,lowest_5,2006: -1.65,m w.e.
+OTL,highest_1,1977: 2.33,m w.e.
+OTL,highest_2,1936: 1.80,m w.e.
+OTL,highest_3,1960: 1.65,m w.e.
+OTL,highest_4,1939: 1.51,m w.e.
+OTL,highest_5,1968: 1.30,m w.e.
+OTL,glamos_n,34,years
+OTL,glamos_r,0.775872,
+OTL,glamos_bias,0.0552857,m w.e. a-1
+OTL,glamos_rmse,0.549699,m w.e. a-1
+OTL,glamos_mean_obs,-0.860912,m w.e. a-1
+OTL,glamos_mean_mod,-0.805626,m w.e. a-1
+OTL,glamos_std_obs,0.878368,m w.e. a-1
+OTL,glamos_std_mod,0.648483,m w.e. a-1
+OTL,geodetic_1930_1949_glamos,-1.057,m w.e. a-1
+OTL,geodetic_1930_1949_model,0.292232,m w.e. a-1
+OTL,geodetic_1950_1961_glamos,-0.343,m w.e. a-1
+OTL,geodetic_1950_1961_model,0.506117,m w.e. a-1
+OTL,geodetic_1962_1971_glamos,0.422,m w.e. a-1
+OTL,geodetic_1962_1971_model,0.420824,m w.e. a-1
+OTL,geodetic_1972_1985_glamos,0.136,m w.e. a-1
+OTL,geodetic_1972_1985_model,0.334628,m w.e. a-1
+OTL,geodetic_1986_1991_glamos,-0.908,m w.e. a-1
+OTL,geodetic_1986_1991_model,-0.367708,m w.e. a-1
+OTL,geodetic_1992_2002_glamos,-0.363,m w.e. a-1
+OTL,geodetic_1992_2002_model,-0.220753,m w.e. a-1
+OTL,geodetic_2003_2008_glamos,-1.51,m w.e. a-1
+OTL,geodetic_2003_2008_model,-1.05359,m w.e. a-1
+OTL,geodetic_2009_2014_glamos,-0.485,m w.e. a-1
+OTL,geodetic_2009_2014_model,-0.722793,m w.e. a-1
+OTL,geodetic_2015_2019_glamos,-0.823,m w.e. a-1
+OTL,geodetic_2015_2019_model,-1.26505,m w.e. a-1
+OTL,geodetic_2022_2024_glamos,-1.989,m w.e. a-1
+OTL,geodetic_2022_2024_model,-1.59605,m w.e. a-1

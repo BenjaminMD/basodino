@@ -1,0 +1,22 @@
+quantity,value,unit,definition
+A_1994,2.3971,km2,cells of mask 1994 x 100 m2
+A_2021,1.6065,km2,cells of mask 2021 x 100 m2
+A_mean,2.0018,km2,(A_1994 + A_2021) / 2
+cells_2021_outside_1994,34,,"glaciated in 2021, not in 1994"
+dh_mean_glacier,-20.6388,m,mean dh on the cells glaciated in 1994 or 2021
+dh_mean_2021_area,-18.8908,m,mean dh on the 2021 mask
+dh_mean_lost_area,-24.1754,m,mean dh where the ice of 1994 had gone by 2021
+dh_min_glacier,-60.28,m,largest lowering
+dV,-0.0495433,km3,sum of dh x cell area on the cells glaciated in 1994 or 2021
+dt,27,a,October 1994 to October 2021
+rho_dV,850,kg m-3,prescribed by the assignment
+B_rate,-0.779147,m w.e. a-1,rho_dV / rho_w x dV / (A_mean x dt)
+B_rate_A1994,-0.65066,m w.e. a-1,the same with A_1994
+B_rate_A2021,-0.970867,m w.e. a-1,the same with A_2021
+B_total,-21.037,m w.e.,B_rate x dt
+dh_stable_mean,-0.00336355,m,mean dh outside both masks
+dh_stable_std,0.090129,m,standard deviation of dh outside both masks
+z_2021_min,2584.76,m a.s.l.,lowest cell of the 2021 mask
+z_2021_max,3176.85,m a.s.l.,highest cell of the 2021 mask
+glamos_B_rate,-0.69,m w.e. a-1,GLAMOS ai-bw 19910918 to sa3d-2022 20219999
+glamos_sigma,0.213,m w.e.,GLAMOS uncertainty of that pair

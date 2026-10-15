@@ -1,0 +1,949 @@
+% Applied Glaciology -- Assignments part 1, shortest answers.
+% Blue box: everything the sheet asks for that question. Answer: plain, in SI units.
+% Grey box: the summarised answer in the units of the sheet.
+% Numbers from ../code/si_units.csv and ../code/task*.csv; uncertainties (one standard deviation) and the
+% significant figures they allow from ../code/errors.csv (code/errors.py). Build: latexmk min_si.tex
+\documentclass{scrartcl}
+\usepackage{agl}
+% Builds from this one file, chosen by \aglmode: "full" (this file as it is, 23 pages), "report" (the title,
+% contents, questions, references and figures: the pages before the supplement) and "supplement" (a cover, S1-S3
+% and the closing views, with their own references); also "pruned" (the 15-page version: everything inside
+% \cut{}, \swap{}{}, cutblock and cutfigure left out) and "marked" (the 23 pages with those passages struck
+% through in red). min_si_report.tex, min_si_supplement.tex, min_si_15.tex and min_si_marked.tex set the mode.
+\ifdefined\aglmode\else\def\aglmode{full}\fi
+\usepackage{lua-ul}% \strikeThrough across paragraphs, lists and equations (not across images: see \agl@cross)
+\makeatletter
+\def\agl@modemarked{marked}\def\agl@modepruned{pruned}\def\agl@modereport{report}\def\agl@modesupplement{supplement}
+\newif\ifagl@report\newif\ifagl@supplement
+\ifx\aglmode\agl@modereport\agl@reporttrue\fi
+\ifx\aglmode\agl@modesupplement\agl@supplementtrue\fi
+\let\ifsupplementbuild\ifagl@supplement% for the body, outside \makeatletter
+% the two halves of the document; each split build drops the other half
+\ifagl@supplement
+  \NewDocumentEnvironment{reportpart}{+b}{}{}
+\else
+  \NewDocumentEnvironment{reportpart}{+b}{#1}{}
+\fi
+\ifagl@report
+  \NewDocumentEnvironment{supplementpart}{+b}{}{}
+  \usepackage{xr}\externaldocument[full-]{build/min_si}% the labels of the full build: Section S1 etc. still resolve
+  \def\sref#1{full-#1}% a label of the other half
+\else
+  \NewDocumentEnvironment{supplementpart}{+b}{#1}{}
+  \def\sref#1{#1}
+\fi
+\newcommand\agl@cross[1]{% a red cross over a box
+  \begin{tikzpicture}[baseline=(i.base)]\node[inner sep=0pt] (i) {#1};
+    \draw[accent, line width=1.2pt, opacity=.85] (i.south west) -- (i.north east);
+    \draw[accent, line width=1.2pt, opacity=.85] (i.north west) -- (i.south east);
+  \end{tikzpicture}}
+\newcommand\agl@markgraphics{\ifdefined\agl@incg\else\let\agl@incg\includegraphics% once per nesting
+  \renewcommand\includegraphics[2][]{\agl@cross{\agl@incg[##1]{##2}}}\fi}
+\ifx\aglmode\agl@modemarked
+  \NewDocumentCommand\cut{+m}{{\color{accent}\strikeThrough{#1}}}
+  \NewDocumentCommand\swap{+m +m}{\cut{#1}{\color{accent}#2}}
+  \NewDocumentCommand\variant{+m +m}{#1}
+  \NewDocumentEnvironment{cutblock}{+b}{{\agl@markgraphics\cut{#1}}}{}
+  \NewDocumentEnvironment{cutfigure}{O{tbp} +b}{\begin{figure}[#1]\agl@markgraphics\cut{#2}\end{figure}}{}
+\else\ifx\aglmode\agl@modepruned
+  \NewDocumentCommand\cut{+m}{}
+  \NewDocumentCommand\swap{+m +m}{#2}
+  \NewDocumentCommand\variant{+m +m}{#2}
+  \renewcommand*\appendix{\agl@appendix\counterwithin{figure}{section}\counterwithin{table}{section}}% as agl.sty without its \clearpage: the supplements follow the references
+  \NewDocumentEnvironment{cutblock}{+b}{}{}
+  \NewDocumentEnvironment{cutfigure}{O{tbp} +b}{}{}
+\else
+  \NewDocumentCommand\cut{+m}{#1}
+  \NewDocumentCommand\swap{+m +m}{#1}
+  \NewDocumentCommand\variant{+m +m}{#1}
+  \NewDocumentEnvironment{cutblock}{+b}{#1}{}
+  \NewDocumentEnvironment{cutfigure}{O{tbp} +b}{\begin{figure}[#1]#2\end{figure}}{}
+\fi\fi
+\makeatother
+\makeatletter% measure 128 mm, about 80 characters; figures keep 150 mm and overhang to the right
+\agl@layout{portrait}{128mm}{242mm}{25mm}{8mm}{14mm}
+\makeatother
+\newcommand\wide[1]{\noindent\makebox[\textwidth][l]{#1}}
+\addbibresource{refs.bib}
+\ExecuteBibliographyOptions{giveninits=false}
+\AtBeginDocument{\postdisplaypenalty=10000}% an equation stays with its symbols table
+\setlength\emergencystretch{2.5em}
+\usepackage{placeins}% \FloatBarrier
+\renewcommand*\bottomfraction{.6}% the outline figure (0.54 of the page) may close the page of Question 5.3
+\tcbuselibrary{breakable}% the question and unit boxes may break across pages, 3 lines at least before a break
+\tcbset{every box/.style={breakable, lines before break=3}}
+\RenewTColorBox{converted}{}{% grey: the summarised answer of each question in the units of the sheet
+  colback=rule!20, colframe=rock, coltext=text,
+  boxrule=0pt, leftrule=2pt, arc=0pt, outer arc=0pt, boxsep=0pt,
+  left=3.6mm, right=3.6mm, top=2.2mm, bottom=2.2mm,
+  before skip=.7\baselineskip, after skip=.7\baselineskip,
+  before upper={\setlength\parindent{0pt}\setlength\parskip{.25\baselineskip}%
+    {\sffamily\bfseries\color{rock}Summarised answer, in the units of the assignment}\par}}
+\DeclareSIUnit\areal{\kilo\gram\per\square\metre}
+\DeclareSIUnit\massflux{\kilo\gram\per\square\metre\per\second}
+\DeclareSIUnit\ddfsi{\kilo\gram\per\square\metre\per\second\per\kelvin}
+\groupmembers{Benjamin Fahl, Valentin Istomin}
+\title{Ghiacciaio del Basòdino}
+\subtitle{Mass balance, melt model and volume projection}
+\date{21 October 2026}
+\makeatletter% title page: the sky-view factor of the terrain fills the whole page (210 x 297 mm, one 0.5 m DEM pixel
+% per image pixel); the title block, with the group and the date, stands on the glacier. The contents follow on page 2.
+\newcommand*\agl@watermark[2]{%
+  \node[anchor=south east, inner sep=2pt, fill=black, fill opacity=.25,
+        text=white, text opacity=.8,
+        font=\sffamily\fontsize{5}{6}\selectfont] at (#1.south east) {#2};}
+\newcommand*\agl@bannerline{Sky-view factor of the terrain, swissALTI3D \qty{0.5}{\metre}, \textcopyright\,swisstopo; LV95 E 2678960--2681440, N 1139792--1143300}
+\newcommand*\agl@titleblock{%
+  \agl@label{Applied Glaciology\enskip\textperiodcentered\enskip Assignments part 1}\par
+  \vspace{1.2mm}%
+  \agl@label{Fall Semester 2026\enskip\textperiodcentered\enskip Submitted \@date}\par
+  \vspace{3mm}%
+  {\fontsize{44}{47}\selectfont\bfseries\color{ink}Ghiacciaio del\\Basòdino\par}%
+  \vspace{2.5mm}%
+  {\fontsize{14}{18}\fontseries{l}\selectfont\color{rock}\@subtitle\par}%
+  \vspace{2.5mm}%
+  {\color{ink}Benjamin Fahl and Valentin Istomin, in equal parts\enskip\textperiodcentered\enskip ETH Zürich\par}}
+\renewcommand*\maketitle{%
+  \thispagestyle{empty}\begingroup\setlength\parindent{0pt}\sffamily
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[inner sep=0pt, anchor=north west] (p) at (current page.north west)
+      {\includegraphics[width=\paperwidth]{figures/hero_page.jpg}};
+    \agl@watermark{p}{\agl@bannerline}
+    \node[anchor=north west, inner sep=0pt, text width=\textwidth, align=left]
+      at ([xshift=\dimexpr 1in+\oddsidemargin\relax, yshift=-170mm]current page.north west) {\raggedright\agl@titleblock};
+  \end{tikzpicture}%
+  \null\endgroup\clearpage
+  % contents, a page of their own: a hand-set list (topic, points, page), the orthophoto of the south margin at the foot
+  \thispagestyle{empty}\begingroup\setlength\parindent{0pt}\sffamily\hypersetup{linkcolor=.}%
+  \agl@label{Applied Glaciology\enskip\textperiodcentered\enskip Assignments part 1}\par
+  \vspace{4mm}%
+  {\fontsize{30}{34}\selectfont\bfseries\color{ink}Contents\par}%
+  \vspace{7mm}%
+  \agl@part{Questions}
+  \agl@row{1}{Geodetic mass balance 1994--2021}{6 pts}{q:1}
+  \agl@row{2}{The weather record since 1935}{5 pts}{q:2}
+  \agl@row{3}{Degree-day model}{19 pts}{q:31}
+  \agl@sub{3.1}{The model and its inputs}{7 pts}{q:31}
+  \agl@sub{3.2}{Calibration, the factor and the literature}{6 pts}{q:32}
+  \agl@sub{3.3}{Assumptions and their biases}{6 pts}{q:33}
+  \agl@row{4}{Mass balance of every year 1935--2025}{7 pts}{q:4}
+  \agl@row{5}{Volume and the years ahead}{14 pts}{q:51}
+  \agl@sub{5.1}{Volume in 2021}{4 pts}{q:51}
+  \agl@sub{5.2}{When half the ice is gone}{6 pts}{q:52}
+  \agl@sub{5.3}{Beyond the constant area}{4 pts}{q:53}
+  \agl@row{}{References}{}{sec:refs}
+  \agl@row{}{The glacier from orbit\cut{, 1938--2026}}{Figure\swap{s 3--6}{ 3}}{fig:outline}
+  \vspace{3mm}%
+  \agl@part{Supplements}
+  \ifagl@report
+  \agl@row{S1}{Area following the volume}{separate PDF}{}
+  \agl@row{S2}{The bed from the thickness map}{separate PDF}{}
+  \agl@row{S3}{Ice-flow model}{separate PDF}{}
+  \agl@row{}{The same view in 1850, 2026 and 2035}{separate PDF}{}
+  \else
+  \cut{\agl@row{S1}{Area following the volume}{}{sec:s1}}
+  \agl@row{\swap{S2}{S1}}{The bed from the thickness map}{}{sec:s2}
+  \agl@row{\swap{S3}{S2}}{Ice-flow model}{}{sec:s3}
+  \cut{\agl@row{}{The same view in 1850, 2026 and 2035}{}{sec:outro}}
+  \fi
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[inner sep=0pt, anchor=south west] (b) at (current page.south west)
+      {\includegraphics[width=\paperwidth]{figures/contents_banner.jpg}};
+    \agl@watermark{b}{The south margin of the glacier, SWISSIMAGE \qty{10}{\centi\metre} of 2024 at \qty{0.2}{\metre} per pixel, \textcopyright\,swisstopo; LV95 E 2679804--2680796, N 1140292--1140708}
+  \end{tikzpicture}%
+  \endgroup\clearpage}
+% rows of the contents page: number (blue), title, note (points) in grey, page number at the right
+\newcommand*\agl@part[1]{%
+  {\color{rule}\hrule height .4pt}\vspace{2.2mm}%
+  \agl@label{#1}\par\vspace{2.8mm}}
+\newcommand*\agl@row[4]{%
+  \noindent\makebox[11mm][l]{\color{glacier}\bfseries\large #1}%
+  {\color{ink}\bfseries\large #2}\hfill{\small\color{rock}#3}\hspace{5mm}\makebox[7mm][r]{\color{ink}\large\agl@pageof{#4}}\par
+  \vspace{2.4mm}}
+\newcommand*\agl@pageof[1]{\if\relax\detokenize{#1}\relax\else\pageref{#1}\fi}
+\newcommand*\agl@sub[4]{%
+  \noindent\hspace*{11mm}\makebox[11mm][l]{\color{glacier}#1}%
+  {\color{ink}#2}\hfill{\small\color{rock}#3}\hspace{5mm}\makebox[7mm][r]{\color{ink}\pageref{#4}}\par
+  \vspace{1.6mm}}
+\ifagl@supplement% the supplement: a plain cover with the Robiei reservoir at the foot, then S1-S3 from page 2
+\renewcommand*\maketitle{%
+  \thispagestyle{empty}\begingroup\setlength\parindent{0pt}\sffamily
+  \agl@label{Applied Glaciology\enskip\textperiodcentered\enskip Assignments part 1}\par
+  \vspace{1.2mm}%
+  \agl@label{Fall Semester 2026\enskip\textperiodcentered\enskip Submitted \@date}\par
+  \vspace{3mm}%
+  {\fontsize{44}{47}\selectfont\bfseries\color{ink}Ghiacciaio del\\Basòdino\par}%
+  \vspace{2.5mm}%
+  {\fontsize{14}{18}\fontseries{l}\selectfont\color{rock}Supplement to the report\par}%
+  \vspace{2.5mm}%
+  {\color{ink}Benjamin Fahl and Valentin Istomin, in equal parts\enskip\textperiodcentered\enskip ETH Zürich\par}%
+  \vspace{12mm}%
+  \agl@part{In this supplement}
+  \agl@row{S1}{Area following the volume}{}{sec:s1}
+  \agl@row{S2}{The bed from the thickness map}{}{sec:s2}
+  \agl@row{S3}{Ice-flow model}{}{sec:s3}
+  \agl@row{}{References}{}{sec:srefs}
+  \agl@row{}{The same view in 1850, 2026 and 2035}{}{sec:outro}
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[inner sep=0pt, anchor=south west] (b) at (current page.south west)
+      {\includegraphics[width=\paperwidth]{figures/supplement_banner.jpg}};
+    \agl@watermark{b}{Sky-view factor of the Robiei reservoir and its dam, north of the glacier, swissALTI3D \qty{0.5}{\metre}, \textcopyright\,swisstopo; LV95 E 2680400--2682880, N 1144900--1145940}
+  \end{tikzpicture}%
+  \endgroup\clearpage}
+\fi
+\makeatother
+
+\renewcommand\unv[1]{#1}% all passages accepted: set in black (remove this line to see them in blue again)
+\begin{document}
+\maketitle
+\begin{reportpart}
+
+% ---------------------------------------------------------------- 1
+\begin{question}{1}{6}\label{q:1}
+Use the geodetic method to compute the mass balance of Ghiacciaio del Basodino for
+1994--2021, with a density of \qty{850}{\kilo\gram\per\cubic\metre} for the volume change.
+
+\textbf{How large was the specific mass change rate during the period?} Express it in
+m\,w.e.\,a$^{-1}$, and explain the assumptions you made.
+\end{question}
+
+\unv{We subtract the 1994 elevation model from the 2021 model, cell by cell, and add up the
+change over every cell that was glacier in 1994 or 2021. Times the density this is the mass
+change; divided by the mean glacier area and the length of the period it is the specific rate:
+\[
+  \dot B = \frac{\rho\,\Delta V}{\bar A\,\Delta t} ,
+  \qquad
+  \Delta V = a \sum_i \bigl(z_{2021,i} - z_{1994,i}\bigr) ,
+  \qquad
+  \bar A = \tfrac12 \bigl(A_{1994} + A_{2021}\bigr) .
+\]
+\begin{symbols}
+  $\dot B$ & specific mass change rate 1994--2021 & \qty{-2.5 \pm 0.3 e-5}{\massflux} \\
+  $\rho$ & density of the volume change (given) & \qty{850}{\kilo\gram\per\cubic\metre} \\
+  $\Delta V$ & volume change, cells $i$ with ice in 1994 or 2021 & \qty{-5.0 \pm 0.5 e7}{\cubic\metre} \\
+  $z_{1994,i}$, $z_{2021,i}$ & surface elevation of cell $i$ & \unit{\metre} \\
+  $a$ & area of one cell, $\qty{10}{\metre} \times \qty{10}{\metre}$ & \qty{100}{\square\metre} \\
+  $A_{1994}$, $A_{2021}$ & glacier area from the two masks, half a cell along the outline & \qty{2.40 \pm 0.05 e6}{}, \qty{1.61 \pm 0.05 e6}{\square\metre} \\
+  $\bar A$ & mean glacier area (hint of the sheet) & \qty{2.00e6}{\square\metre} \\
+  $\Delta t$ & October 1994 to October 2021, 27 years & \qty{8.52e8}{\second} \\
+\end{symbols}
+Over the whole period the glacier lost $\dot B\,\Delta t = \qty{-2.1 \pm 0.3 e4}{\areal}$.
+
+Assumptions:
+\begin{itemize}
+  \item All of the volume change has the given density of \qty{850}{\kilo\gram\per\cubic\metre},
+    which allows for some firn \parencite{Huss2013}.
+  \item Both elevation models are from October, so the period holds 27 whole melt seasons.
+  \item The two elevation models are aligned as supplied. Outside the glaciers they are
+    identical except in 37 of \num{15775} cells at the ice edge, so the terrain cannot test the
+    1994 heights over the glacier.
+  \item The rate refers to the mean area. With the 1994 or the 2021 area alone it would be
+    \qty{-2.1e-5}{} or \qty{-3.1e-5}{\massflux}.
+\end{itemize}
+
+Uncertainty, one standard deviation of each input: the 1994 model \qty{\pm 2}{\metre} and the
+2021 model \qty{\pm 1}{\metre} as one offset over the glacier (our assumption; the sheet gives
+no accuracy), \qty{11}{\percent} of the rate; the density \qty{\pm 60}{\kilo\gram\per\cubic\metre}
+\parencite{Huss2013}, \qty{7}{\percent}; the masks half a cell along the outline,
+\qty{2}{\percent}; the dates anywhere in October, \qty{0.1}{\percent}. Together
+\qty{13}{\percent}. Glacier Monitoring Switzerland finds \qty{-2.2 \pm 0.7 e-5}{\massflux} for
+1991--2021 from its own elevation models.
+
+\begin{converted}
+The glacier lost $0.78 \pm 0.10$ m\,w.e.\,a$^{-1}$ over 1994--2021, on the mean of the two
+areas and at \qty{850}{\kilo\gram\per\cubic\metre}. A year has \qty{3.156e7}{\second}, and
+\qty{1}{\kilo\gram} of water on \qty{1}{\square\metre} is a layer \qty{1}{\milli\metre} thick:
+\begin{align*}
+  \qty{-2.47e-5}{\massflux} \times \qty{3.156e7}{\second\per\annum}
+  &= \qty{-779}{\kilo\gram\per\square\metre\per\annum} \\
+  &= -0.78 \pm 0.10\ \text{m\,w.e.\,a}^{-1} .
+\end{align*}
+\begin{itemize}
+  \item Whole period: $-21 \pm 3$ m\,w.e.
+  \item With the 1994 area $-0.65$, with the 2021 area $-0.97$ m\,w.e.\,a$^{-1}$.
+  \item Glacier Monitoring Switzerland, 1991--2021: $-0.69 \pm 0.21$ m\,w.e.\,a$^{-1}$.
+\end{itemize}
+\end{converted}}
+
+% ---------------------------------------------------------------- 2
+\begin{question}{2}{5}\label{q:2}
+Retrieve a homogenized temperature and precipitation time series in monthly resolution, since
+1935, for a meteorological station that you consider representative for the glacier.
+
+\textbf{Which data did you choose and why?} State the url from which you downloaded the data,
+and discuss the choice of the station.
+\end{question}
+
+\unv{We use the homogenised monthly temperature and precipitation of Locarno\mbox{-}Monti, a
+MeteoSwiss station at \qty{367}{\metre}, \qty{36}{\kilo\metre} south-east of the glacier. The
+series covers October 1934 to September 2025 without gaps. We downloaded it on 23 September 2026
+from \url{https://data.geo.admin.ch/ch.meteoschweiz.ogd-nbcn/otl/ogd-nbcn_otl_m.csv}.
+
+Three stations within \qty{40}{\kilo\metre} have homogenised temperature and precipitation
+since 1935: Grimsel Hospiz, Andermatt and Locarno\mbox{-}Monti. Only Locarno\mbox{-}Monti lies south of the
+main Alpine ridge, like the glacier, so it shares the glacier's precipitation from the south.
+The drawback is height. The station lies \qtyrange{2.2}{2.8}{\kilo\metre} below the glacier,
+so its temperature has to be carried up to every glacier cell with the lapse rate of Task~3,
+\[
+  T(z) = T_\text{station} - \Gamma\,(z - z_\text{station}) ,
+  \qquad \Gamma = \qty{6.5e-3}{\kelvin\per\metre} ,
+  \qquad z_\text{station} = \qty{367}{\metre} ,
+\]
+which makes the glacier \qtyrange{14}{18}{\kelvin} colder than the station. Any error in
+$\Gamma$ grows with that height difference: \qty{0.5e-3}{\kelvin\per\metre} moves the glacier
+temperature by \qty{1.3}{\kelvin} from Locarno\mbox{-}Monti and by \qty{0.5}{\kelvin} from Grimsel
+Hospiz at \qty{1980}{\metre}. The measured balances of 1992--2025 cannot separate the three
+stations: the model of Task~3 follows them with a correlation of 0.78 with Locarno\mbox{-}Monti,
+0.74 with Grimsel Hospiz and 0.70 with Andermatt, and a correlation from 34 years is uncertain
+by about $\pm 0.15$. The snow does: the winter precipitation of Locarno\mbox{-}Monti follows the
+measured winter balance with a correlation of 0.67, that of Grimsel Hospiz, north of the ridge,
+with 0.53.
+
+\begin{converted}
+Locarno\mbox{-}Monti, the MeteoSwiss station at \qty{367}{\metre}, \qty{36}{\kilo\metre}
+south-east of the glacier and on its side of the Alpine ridge: homogenised monthly temperature
+(\unit{\degreeCelsius}) and precipitation (\unit{\milli\metre}) from October 1934, downloaded on
+23 September 2026 from the address above.
+\end{converted}}
+
+% ---------------------------------------------------------------- 3.1
+\begin{question}{3.1}{7}\label{q:31}
+Use the time series of Question~2 to calibrate the Degree Day Factor (DDF) of a simple
+temperature index model.
+
+\textbf{What was your procedure?} Give a step by step explanation and mention every assumption.
+Discuss whether you use a distributed model (every grid cell separately) or not (for example
+only the mean glacier elevation).
+\end{question}
+
+\unv{Melt $M$ is the mass of snow or ice that turns into water per square metre of glacier.
+The model makes the melt rate proportional to the positive temperature $T^+$, the amount by
+which the air is above the melting point, and zero below it:
+\[
+  T^+ = \max\bigl(T - T_\text{melt},\,0\bigr) , \qquad
+  \frac{\mathrm{d}M}{\mathrm{d}t} = F\,T^+ .
+\]
+The factor $F$ is what we calibrate, with the monthly series of Question~2, October 1994 to
+September 2021. Month by month and cell by cell, then year by year:
+\begin{gather*}
+  T_i(z) = T_{\text{station},i} - \Gamma\,(z - z_\text{station}) , \qquad
+  T^+_i(z) = \max\bigl(T_i(z) - T_\text{melt},\,0\bigr) , \\
+  P^\text{snow}_i(z) = \begin{cases} P_i & \text{if } T_i(z) < T_0 \\ 0 & \text{otherwise} \end{cases} , \qquad
+  M_i(z) = F\,\tau\,T^+_i(z) , \\
+  C_y = \Bigl\langle \sum_{i \in y} P^\text{snow}_i(z) \Bigr\rangle , \qquad
+  S_y = \Bigl\langle \sum_{i \in y} \tau\,T^+_i(z) \Bigr\rangle , \qquad
+  B_y = C_y - F\,S_y , \\
+  F = \frac{\sum_y C_y - \dot B\,\Delta t}{\sum_y S_y} .
+\end{gather*}
+\begin{symbols}
+  $T_i(z)$, $T^+_i(z)$ & temperature and its positive part & \unit{\kelvin} \\
+  $T_{\text{station},i}$, $P_i$ & station temperature, precipitation & \unit{\kelvin}, \unit{\areal} \\
+  $z$, $z_\text{station}$ & cell elevation (2021 surface); station & \qtyrange{2585}{3177}{}, \qty{367}{\metre} \\
+  $\Gamma$ & lapse rate (given) & \qty{6.5e-3}{\kelvin\per\metre} \\
+  $T_0$ & snow threshold (given) & \qty{275.15}{\kelvin} \\
+  $T_\text{melt}$ & melt threshold (given) & \qty{273.15}{\kelvin} \\
+  $\tau$ & month, $365/12$ days (given) & \qty{2.628e6}{\second} \\
+  $P^\text{snow}_i(z)$, $M_i(z)$ & snowfall, melt of month $i$ at $z$ & \unit{\areal} \\
+  $\langle\,\cdot\,\rangle$ & mean over the \num{16065} glacier cells & \\
+  $C_y$ & snowfall of year $y$, glacier mean & \qty{1.23e3}{\areal}, mean year \\
+  $S_y$ & positive temperature summed over year $y$ & \qty{4.52e7}{\kelvin\second}, mean year \\
+  $B_y$ & balance of year $y$, glacier mean & \unit{\areal} \\
+  $\dot B\,\Delta t$ & mass change 1994--2021 (Question~1) & \qty{-2.1 \pm 0.3 e4}{\areal} \\
+  $F$ & degree-day factor & \qty{4.5 \pm 2.0 e-5}{\ddfsi} \\
+\end{symbols}
+The steps:
+\begin{enumerate}
+  \item Surface: the 2021 elevation model inside the 2021 mask, \num{16065} cells of
+    $\qty{10}{\metre} \times \qty{10}{\metre}$, fixed in time; both models refer to October
+    (given), so the period holds 27 whole balance years.
+  \item For every cell $z$ and month $i$: the temperature from the station with the lapse rate;
+    snow where the cell is colder than $T_0$, the same precipitation at every elevation (block
+    rain model); melt from the positive temperature over the month (first two lines above). All
+    given.
+  \item For every hydrological year $y$: the glacier means of the snowfall, $C_y$, and of the
+    positive temperature integrated over time, $S_y$; the balance $B_y = C_y - F S_y$.
+  \item $F$ such that the 27 balances add up to the mass change of Question~1. $B_y$ is a
+    straight line in $F$, so this gives $F$ directly (last line above).
+\end{enumerate}
+We compute every cell separately (distributed), not only the mean elevation, because snow and
+melt switch on and off at thresholds and so do not change linearly with elevation. Here the
+difference is small: at the mean elevation alone (\qty{2896}{\metre}) $F$ would be
+\qty{1.3}{\percent} higher.
+
+Assumptions beyond the given ones: the rate of Question~1, which refers to the mean area, is
+applied to the 2021 surface (matching the total mass change on the 2021 area instead would
+give $F$ \qty{9.5}{\percent} higher); meltwater does not refreeze; the station precipitation
+needs no correction.
+
+\begin{converted}
+A distributed temperature-index model, every \qty{10}{\metre} cell of the 2021 surface, month
+by month, with the given thresholds and lapse rate; $F$ is the one value for which the 27
+modelled balances of October 1994 to September 2021 add up to the geodetic $-21 \pm 3$ m\,w.e.
+of Question~1. Its value, in the unit of the sheet, is in Question~3.2.
+\end{converted}}
+
+% ---------------------------------------------------------------- 3.2
+\begin{question}{3.2}{6}\label{q:32}
+\textbf{What value (and unit) do you obtain for the calibrated DDF, and how does it compare to
+values reported in the literature?}
+
+Have \enquote{days} in the unit. Compare against at least two published DDF values, with
+references, and discuss what might cause the differences.
+\end{question}
+
+\unv{$F = \qty{4.5 \pm 2.0 e-5}{\ddfsi}$; in the unit with days it is $3.8 \pm 1.7$ mm w.e. per
+\unit{\degreeCelsius} per day (grey box). The uncertainty, with $F$ recalibrated for one
+standard deviation of each input: lapse rate \qty{\pm 0.5e-3}{\kelvin\per\metre} (between
+Locarno\mbox{-}Monti and Robiei, \qty{1898}{\metre}, the measured gradient of 1991--2025 is
+\qtyrange{6.1}{7.4}{\kelvin\per\kilo\metre} in the melt months), \qty{\pm 1.8e-5}{};
+precipitation \qty{\pm 25}{\percent}, \qty{\pm 0.7e-5}{}; the rate of Question~1
+\qty{\pm 13}{\percent}, \qty{\pm 0.2e-5}{}; snow threshold \qty{\pm 1}{\kelvin},
+\qty{\pm 0.2e-5}{\ddfsi}. The lapse rate dominates because it acts over \qty{2.5}{\kilo\metre}
+of height.
+
+Published values are \qty{6.1e-5}{} for snow and \qty{1.35e-4}{\ddfsi} for ice on
+Aletschgletscher \parencite{Hock2003}, and \qty{4.1e-5}{} to \qty{5.3e-5}{\ddfsi} for snow on
+66 glaciers \parencite{Braithwaite2008}. Ours agrees with the snow values within its
+uncertainty and lies at a third of the ice value, although the glacier is bare ice for most of
+the melt season: in 2026 the winter snow left it during July, and from August on it melted as
+ice (\cref{fig:year}).
+
+$F$ is fitted, so it takes up the errors of the input:
+\begin{itemize}
+  \item The temperature comes from a station \qty{2.5}{\kilo\metre} lower. The glacier gets
+    many warm months, and more warm months need a smaller $F$ for the same melt. With Grimsel
+    Hospiz, \qty{0.9}{\kilo\metre} below the glacier but north of the ridge, $F$ would be
+    \qty{6.7e-5}{\ddfsi}; its snow fits the glacier worst (Question~2).
+  \item The model gets only \qty{60}{\percent} of the winter snow measured on the glacier
+    (\qty{880}{} against \qty{1470}{\areal}). Less snow needs less melt, so $F$ is smaller.
+  \item One $F$ serves snow and ice, while the published values separate them.
+  \item The published values come from daily data at single points, ours from monthly means
+    over the whole glacier.
+\end{itemize}
+
+\begin{converted}
+DDF $= 3.8 \pm 1.7$ mm\,w.e.\,(\unit{\degreeCelsius}\,d)$^{-1}$, within the published snow
+values and a third of the ice value. A day has \qty{86400}{\second}:
+\[
+  F = \qty{4.46e-5}{\ddfsi} \times \qty{86400}{\second\per\day}
+  = 3.85\ \text{mm\,w.e.}\,(\unit{\degreeCelsius}\,\text{d})^{-1} ,
+\]
+that is $3.8 \pm 1.7$ at one standard deviation.
+The published values with the same factor, in mm\,w.e.\,(\unit{\degreeCelsius}\,d)$^{-1}$:
+\begin{itemize}
+  \item Aletschgletscher: 5.3 (snow), 11.7 (ice).
+  \item 66 glaciers: 3.5 to 4.6 (snow).
+  \item Our model with Grimsel Hospiz: 5.8.
+\end{itemize}
+\end{converted}}
+
+% Figure 1 follows the answer that refers to it. The grey box above ends its page exactly, so the
+% float would only be registered on the next page and its page would split Question 4: the barrier
+% makes it the next page. (If the grey box ever stops filling its page, the barrier ends that page
+% early; then drop it.)
+\begin{figure}[p]
+  \wide{\includegraphics[width=148.5mm]{figures/satellite_year_2026_planet.pdf}}% 99 %: at 150 mm the page is 1.2 mm short
+  \credit{PlanetScope: \textcopyright\,Planet Labs PBC 2025--2026, Education and Research programme;
+    Sentinel-2: contains modified Copernicus Sentinel data 2026, surface reflectance (Level-2A) from
+    Earth Search, Element 84}
+  \caption{Ghiacciaio del Basòdino through the hydrological year 2026 in true colour, PlanetScope
+    (\qty{3}{\metre}) where a clear scene exists and Sentinel-2 (\qty{10}{\metre}) otherwise. \unv{All
+    tiles with one colour stretch; red: our glacier outline of 27 September 2026. Fresh snow on 8
+    October 2025; the glacier still white on 23 May and 13 June; bare ice spreading from the north
+    during July; bare ice everywhere from August; on 12 October 2026, the newest clear scene, the
+    first snow of the new hydrological year covers the glacier again. The coloured stripe on 13 June
+    is a sensor artefact.}}
+  \label{fig:year}
+\end{figure}
+
+% ---------------------------------------------------------------- 3.3
+\begin{question}{3.3}{6}\label{q:33}
+\textbf{Reflect upon the assumptions that were necessary for the calibration. Which are likely
+to introduce a bias? In what direction do the individual biases go, and which assumptions are
+likely to introduce the largest biases?}
+\end{question}
+
+\unv{Largest first:
+\begin{itemize}
+  \item Station temperature carried up \qty{2.5}{\kilo\metre} with one fixed lapse rate. The
+    glacier is probably too warm, so $F$ is too low. The choice of station alone moves $F$
+    between \qty{4.46e-5}{} and \qty{8.09e-5}{\ddfsi}; a lapse rate
+    \qty{0.5e-3}{\kelvin\per\metre} off moves it by \qty{40}{\percent}.
+  \item The same precipitation at every elevation, without the snow that the gauge misses or
+    that wind and avalanches bring. The model has too little snow, so $F$ is too low.
+  \item Monthly means hide warm days in cold months. Daily temperatures give
+    \qty{10}{\percent} more degree-days, so $F$ is about \qty{10}{\percent} too high.
+  \item The surface is fixed at 2021, although the glacier reached lower before. The model
+    counts too little warmth, so $F$ is \qtyrange{3}{5}{\percent} too high.
+  \item Density, \qty{\pm 60}{\kilo\gram\per\cubic\metre}: $F$ changes by
+    \qty{\pm 3}{\percent}, either way.
+  \item One factor for snow and ice. This does not shift $F$, but the model melts too much in
+    snowy years and too little in bare-ice years, so its extreme years are too mild.
+\end{itemize}
+The two largest biases come from the input data, temperature and snow, and both push $F$
+down.
+
+\begin{converted}
+The largest biases, the temperature carried up \qty{2.5}{\kilo\metre} and the block-rain snow,
+both make $F$ too low. The station range, in mm\,w.e.\,(\unit{\degreeCelsius}\,d)$^{-1}$:
+\begin{itemize}
+  \item $\qty{4.46e-5}{\ddfsi} \times \qty{86400}{\second\per\day} = 3.85$,
+  \item $\qty{8.09e-5}{\ddfsi} \times \qty{86400}{\second\per\day} = 6.99$.
+\end{itemize}
+\end{converted}}
+
+% ---------------------------------------------------------------- 4
+\begin{question}{4}{7}\label{q:4}
+Use the model of Task~3 and the same time series to reconstruct the annual mass balance for
+1935--2025, in m\,w.e.\,a$^{-1}$, for hydrological years (1~Oct.\ -- 30~Sep.). Plot the
+results.
+
+\textbf{What are (i) the cumulative and (ii) the average mass balance, and what do you observe
+in the yearly series?} Can you discern trends, and do periods or single years stand out?
+\end{question}
+
+\begin{figure}[bp]% placed before the answer; at the foot of a page, so that the unbreakable start of Question 5.1 keeps its room
+  \wide{\includegraphics{figures/mb_1935_2025_si.pdf}}
+  \caption{Mass balance of each hydrological year, 1935--2025; \qty{1e3}{\areal} is
+    \qty{1}{\metre} of water. \unv{(a) Modelled (bars) with its 11-year running mean, and
+    measured since 1992 (circles) and over the survey periods (lines). (b) Cumulative balance,
+    modelled and measured.}}
+  \label{fig:mb}
+\end{figure}
+
+\unv{We run the model of Question~3.1 with the calibrated $F$ on the fixed 2021 surface for the
+91 hydrological years 1935--2025 (\cref{fig:mb}).
+
+\noindent\makebox[2.4em][l]{(i)}Cumulative: \qty{-1.0 \pm 2.0 e4}{\areal}. \\
+\makebox[2.4em][l]{(ii)}Average: \qty{-0.4 \pm 0.7 e-5}{\massflux}.
+
+The uncertainty comes from the inputs of Question~3 with $F$ recalibrated each time (lapse
+rate \qty{\pm 1.5e4}{}, precipitation \qty{\pm 1.1e4}{}, the rate of Question~1
+\qty{\pm 0.7e4}{}, snow threshold \qty{\pm 0.5e4}{\areal}): the calibration fixes the 27 years
+1995--2021, so the error sits in the other 64. The geodetic surveys of Glacier Monitoring
+Switzerland, chained with its measured years, give \qty{-4.8 \pm 0.7 e4}{\areal} for
+1935--2025. Before 1962 the model is too positive by \qty{1.1e3}{\areal} per year; the glacier of that time was
+larger and reached lower than the 2021 surface the model runs on (Hint~2).
+
+\begin{itemize}
+  \item The glacier gained mass until the 1980s and has lost it since. The mean rate was
+    \qty{+1.2 \pm 1.3 e-5}{\massflux} in 1935--1965, \qty{+0.5 \pm 0.9 e-5}{} in 1966--1995 and
+    \qty{-2.8 \pm 0.4 e-5}{} in 1996--2025. The cumulative balance peaks in 1984. Since 1996
+    only two years are positive.
+  \item Trend: none until 1985; from 1986 the rate falls by \num{3.3 \pm 1.1 e-14}
+    \unit{\kilo\gram\per\square\metre\per\square\second} (\num{\pm 0.7e-14} from the fit
+    alone); the grey box gives it in the unit of the sheet.
+  \item Single years: the most negative are 2022 (\qty{-2.3e3}{\areal}), 2003 and 2018, all
+    hot summers; 2018 and 2022 also followed dry winters. The most positive is 1977
+    (\qty{+2.3e3}{\areal}), the wettest year of the series.
+  \item Check: against the 34 balances measured on the glacier since 1992 the correlation is
+    0.78 (0.59 to 0.88 at \qty{95}{\percent}) and the root mean square difference
+    \qty{0.55e3}{\areal} per year, but the extremes are too mild. In 2022 the measured loss was
+    \qty{3.5e3}{\areal}.
+\end{itemize}
+
+\begin{converted}
+\begin{itemize}
+  \item (i) $\qty{-1.02e4}{\areal} \div 1000 = -10.2$, that is $-10 \pm 20$ m\,w.e.; the
+    measured chain $-48 \pm 7$ m\,w.e.
+  \item (ii) $\qty{-3.57e-6}{\massflux} \times \qty{3.156e7}{\second\per\annum}
+    = \qty{-113}{\kilo\gram\per\square\metre\per\annum}$,\\ that is $-0.11 \pm 0.22$ m\,w.e.\,a$^{-1}$.
+  \item Period means $+0.38 \pm 0.40$, $+0.17 \pm 0.27$ and $-0.90 \pm 0.11$ m\,w.e.\,a$^{-1}$.
+  \item Trend from 1986 on: times \qty{3.156e8}{\second} per decade, then as a rate:
+    $-0.33 \pm 0.11$ m\,w.e.\,a$^{-1}$ per decade.
+  \item Years: 2022 $-2.3$ (measured $-3.5$), 1977 $+2.3$ m\,w.e.; a modelled year is
+    uncertain by $0.55$ m\,w.e.
+\end{itemize}
+\end{converted}}
+
+
+% ---------------------------------------------------------------- 5.1
+\begin{question}{5.1}{4}\label{q:51}
+Use volume-area scaling to estimate the volume of the glacier for the year 2021.
+
+\textbf{What was the glacier volume in 2021?} Express the result in \unit{\kmcubed}.
+\end{question}
+
+\unv{Volume--area scaling with the 2021 area of Question~1:
+\[
+  V_{2021} = c\,A_{2021}^{\gamma} = 0.19\,\sqrt[4]{\mathrm{m}} \times
+  \bigl(\qty{1.61e6}{\square\metre}\bigr)^{1.375} = \qty{6.5e7}{\cubic\metre} .
+\]
+\begin{symbols}
+  $V_{2021}$ & glacier volume in 2021 & \qty{6.5 \pm 2.2 e7}{\cubic\metre} \\
+  $A_{2021}$ & glacier area in 2021 (Question~1) & \qty{1.61 \pm 0.05 e6}{\square\metre} \\
+  $c$ & scaling constant, worldwide mean \parencite{Bahr2015}, unit $\mathrm{m}^{3 - 2\gamma}$ & $0.19\,\sqrt[4]{\mathrm{m}}$, $\pm \qty{34}{\percent}$ \\
+  $\gamma$ & scaling exponent, fixed by theory \parencite{Bahr1997} & 1.375 \\
+\end{symbols}
+The mean thickness $V/A = c\,A^{0.375}$ is then \qty{41 \pm 14}{\metre}. The relation gives the
+average glacier of this area, not this glacier: one standard deviation of $c$ changes the
+volume by \qty{34}{\percent} \parencite{Bahr2015}, half a cell along the outline by
+\qty{4.7}{\percent}, so $V_{2021}$ is uncertain by \qty{34}{\percent}. The measured thickness
+map of Swiss glaciers \parencite{Grab2021} gives only \qty{1.4e7}{\cubic\metre} for 2021
+(Question~5.3).
+
+\begin{converted}
+$V_{2021} = 0.065 \pm 0.022$ km$^3$, a mean thickness of $41 \pm 14$ m. A cubic kilometre is
+\qty{1e9}{\cubic\metre}.
+\begin{itemize}
+  \item $V_{2021} = \qty{6.5e7}{\cubic\metre} \times 10^{-9} = \qty{0.065 \pm 0.022}{\kmcubed}$.
+  \item $c$ in the length unit of $A$: $0.19\,\mathrm{m}^{1/4} = 0.034\,\mathrm{km}^{1/4}$.
+\end{itemize}
+\end{converted}}
+
+% ---------------------------------------------------------------- 5.2
+\begin{question}{5.2}{6}\label{q:52}
+Use the mass balance series of Task~4 to compute the mass change until 2025. For the future,
+assume that the mass balance rate stays at its average of 1995--2025. Assume that the glacier
+area stays at its 2021 value (Hint~1).
+
+\textbf{In which year will the glacier have lost \qty{50}{\percent} of its 2021 volume?} Discuss
+whether this projection is likely an under- or overestimate, and why.
+\end{question}
+
+\unv{Mass per area becomes ice thickness by the ice density, and volume by the constant area:
+\[
+  V(t) = V_{2021} + \frac{A_{2021}}{\rho_\text{ice}}
+    \Bigl(\sum_{y=2022}^{2025} B_y + (t - t_{2025})\,\dot B_\text{future}\Bigr) ,
+  \qquad
+  V(t_{1/2}) = \tfrac12\,V_{2021} .
+\]
+\begin{symbols}
+  $V(t)$ & glacier volume at time $t$ & \unit{\cubic\metre} \\
+  $V_{2021}$ & volume in 2021 (Question~5.1) & \qty{6.5 \pm 2.2 e7}{\cubic\metre} \\
+  $A_{2021}$ & area in 2021, kept constant (Hint~1) & \qty{1.61e6}{\square\metre} \\
+  $\rho_\text{ice}$ & mean glacier density (Hint~4) & \qty{900}{\kilo\gram\per\cubic\metre} \\
+  $\sum B_y$ & balances of 2022--2025 from Task~4 & \qty{-5.9 \pm 1.1 e3}{\areal} \\
+  $\dot B_\text{future}$ & mean rate of the 30 years 1996--2025 & \qty{-2.8 \pm 0.4 e-5}{\massflux} \\
+  $t_{2025}$ & end of September 2025 & \\
+  $t_{1/2}$ & time at which half of $V_{2021}$ is lost & $2039 \pm 8$ \\
+\end{symbols}
+Until 2025 the glacier loses \qty{1.0e7}{\cubic\metre}, which leaves
+\qty{5.5e7}{\cubic\metre}; after that it loses \qty{1.6e6}{\cubic\metre} per year. Half of the
+2021 volume is gone in 2039, uncertain by 8 years (one standard deviation): 7 from the
+scaling volume, 2 from the rate of Question~1 through the future balance, 1.5 from the lapse
+rate and the precipitation. Read as the 31 years 1995--2025, the mean rate is
+\qty{-2.75e-5}{\massflux} and the year 2040, a difference far inside that uncertainty.
+
+We think 2039 is too late, so the projection overestimates the time left:
+\begin{itemize}
+  \item Constant area (Hint~1) makes the year too early. A shrinking glacier loses less ice
+    each year, and it loses its lowest, most negative parts first. If the area follows the
+    volume through the scaling relation, the year is 2044.
+  \item Constant balance makes the year too late, because the climate keeps warming. With the
+    mean rate of 2015--2025, \qty{-4.1e-5}{\massflux}, the year is 2035.
+  \item Task~4 loses too little in 2022--2025: \qty{5.9e3}{} against \qty{8.6e3}{\areal}
+    measured. With the measured values the year is 2036.
+  \item The scaling volume is probably too large (Question~5.1). Half of the
+    \qty{1.4e7}{\cubic\metre} from the thickness map is less than the ice lost by 2025.
+\end{itemize}
+Three of the four effects make the year earlier. Each shift is smaller than the uncertainty of
+the year itself, which the 2021 volume sets.
+
+\begin{converted}
+Half of the 2021 volume is gone in $2039 \pm 8$; the projection overestimates the time left.
+The future rate:
+\begin{align*}
+  \dot B_\text{future} &= \qty{-2.84e-5}{\massflux} \times \qty{3.156e7}{\second\per\annum}
+  \div 1000 \\
+  &= -0.90 \pm 0.11\ \text{m\,w.e.\,a}^{-1} .
+\end{align*}
+\begin{itemize}
+  \item Over 31 years $-0.87$; for 2015--2025 $-1.3$ m\,w.e.\,a$^{-1}$.
+  \item 2022--2025: $-5.9 \pm 1.1$ m\,w.e. modelled, $-8.6$ measured.
+  \item Volumes times $10^{-9}$: $0.065 \pm 0.022$ in 2021, 0.055 in 2025, half of 2021
+    \qty{0.033}{\kmcubed}.
+  \item Loss after 2025: \qty{0.0016}{\kmcubed} per year.
+\end{itemize}
+\end{converted}}
+
+% ---------------------------------------------------------------- 5.3
+\begin{question}{5.3}{4}\label{q:53}
+\textbf{Can you think of a strategy that avoids the constant area of Hint~1?}
+
+Explain how, and what additional information, tools or methods (if any) you would need.
+\end{question}
+
+\unv{Three ways, from simple to complete. We tried all three; the supplement shows each.
+\begin{enumerate}
+  \item Let the area follow the volume. Every year, compute the area from the volume with the
+    scaling relation of Question~5.1, $A = (V/c)^{1/\gamma}$. This needs nothing new. Half of the
+    2021 volume is then gone in 2044 instead of 2039\cut{ (\cref{\sref{sec:s1}})}.
+  \item Use the bed. The ice thickness of 2021 is the surface minus the bed. Every year each
+    cell loses the balance of its elevation band, and a cell leaves the glacier when its ice is
+    gone. This needs the bed, which the thickness map of all Swiss glaciers \parencite{Grab2021}
+    provides, for Basòdino from radar profiles of 2006. Melted with the balances measured since
+    2021, the map loses area faster than the satellite shows, so its ice is too thin: the
+    observed retreat fits a 2021 volume of \qty{2.1e7}{} to \qty{2.4e7}{\cubic\metre}
+    (\cref{\sref{sec:s2}}). By the measured balances the glacier has lost
+    \qty{1.70e7}{\cubic\metre} since September 2021, 1.2 times the volume the map gave it, and
+    it is still there.
+  \item An ice-flow model, which also moves ice from the top towards the tongue. This needs the
+    bed, a flow law and far more computing. Our run set of \num{10062} ice-flow projections puts
+    the glacier below \qty{1e4}{\square\metre} in 2039 to 2040, the same in all three emission
+    scenarios, and in \qty{96}{\percent} of the runs in the same year with and without flow
+    (\cref{\sref{sec:s3}}). For a glacier \qty{9}{\metre} thick the flow no longer matters; the bed
+    does.
+\end{enumerate}
+\cut{Satellite images check the area every year (\cref{fig:summers,fig:record1,fig:record2}). }With Sentinel-2 we measured
+\qty{1.03 \pm 0.09 e6}{\square\metre} on 27 September 2026 (\cref{fig:outline}),
+\qty{35 \pm 8}{\percent} less than in 2021 by the same method.
+
+\begin{converted}
+Area from volume by scaling (half gone in 2044); the measured bed melted cell by cell; an
+ice-flow model (ice gone in 2039 to 2040); the last two need the bed and computing.
+\begin{itemize}
+  \item Areas times $10^{-6}$: \qty{1.03e6}{\square\metre} is \qty{1.03}{\kilo\metre\squared};
+    \qty{1e4}{\square\metre} is \qty{0.01}{\kilo\metre\squared}.
+  \item Volumes times $10^{-9}$: \qty{1.4e7}{\cubic\metre} is \qty{0.014}{\kmcubed};
+    \qty{1.70e7}{\cubic\metre} lost is \qty{0.017}{\kmcubed}.
+  \item \qty{2.1e7}{} to \qty{2.4e7}{\cubic\metre} is \qty{0.021}{} to \qty{0.024}{\kmcubed}.
+\end{itemize}
+\end{converted}}
+
+% The figures of Question 5.3 follow its answer and are numbered in this order: the outline closes
+% the page on which the answer ends, the two tall record figures fill the next two pages, record 2
+% closes the references page.
+\begin{figure}[bp]% foot of the page on which Question 5.3 ends
+  \wide{\includegraphics[width=144mm]{figures/outline_2026_si.pdf}}% 96 %: at 150 mm the foot of that page is 3 mm short
+  \credit{Contains modified Copernicus Sentinel data 2026; surface reflectance (Level-2A) from
+    Earth Search, Element 84; 2024 outline: swissTLM3D, \textcopyright\,swisstopo; 2021 outline:
+    course material}
+  \caption{Our outline of Ghiacciaio del Basòdino on 27 September 2026, over Sentinel-2 true
+    colour of that day. \unv{Red: \qty{1.03 \pm 0.09 e6}{\square\metre}, a body of
+    \qty{1.02e6}{\square\metre} with four holes of rock or debris and two detached blocks of
+    ice; the uncertainty is one \qty{10}{\metre} pixel along the whole perimeter. Dark blue: the
+    2024 outline of the Federal Office of Topography (\qty{1.38e6}{\square\metre}); dashed: the
+    course mask of 2021 (\qty{1.61e6}{\square\metre}).}}
+  \label{fig:outline}
+\end{figure}
+
+\begin{cutfigure}[p]
+  \wide{\includegraphics[width=143.5mm]{figures/satellite_summers.pdf}}% 96 %: at 150 mm the page is 9 mm short
+  \credit{PlanetScope: \textcopyright\,Planet Labs PBC 2018--2026, Education and Research programme;
+    Sentinel-2: contains modified Copernicus Sentinel data 2016--2024}
+  \caption{The end of every summer 2016--2026 in true colour, PlanetScope (\qty{3}{\metre}) where
+    the archive has a clear scene after 10 September and Sentinel-2 (\qty{10}{\metre}) for 2016,
+    2017 and 2024. \unv{One colour stretch for all tiles; red: our outline of 27 September 2026 in
+    every tile, so that the ice beyond it is the ice lost. The glacier of 2016 reaches well beyond
+    the red line on every side; from 2022 on, the summers end with bare ice over the whole glacier.}}
+  \label{fig:summers}
+\end{cutfigure}
+
+\begin{cutfigure}[p]
+  \wide{\includegraphics[width=142.5mm]{figures/satellite_record_1.pdf}}% 95 %: at 150 mm the page is 10 mm short
+  \credit{Aerial orthophotos: \textcopyright\,swisstopo (LUBIS, SWISSIMAGE); Landsat: U.S. Geological Survey;
+    Sentinel-2: contains modified Copernicus Sentinel data}
+  \caption{The end of every summer with a usable image, 1938--2015: the best image of each year after 10
+    August, aerial orthophoto, Sentinel-2 or Landsat. \unv{The window E 2678800--2681800,
+    N 1140200--1142200 holds the glacier of 1931. Red: our outline of 27 September 2026 in every tile.
+    Black and white: aerial films; false colour (near infrared, red, green): the Landsat 5
+    multispectral scanner at \qty{60}{\metre} in 2012; the other satellites in true colour with one
+    stretch, near-saturated snow drawn grey. Years without a usable image are left out: no image, cloud,
+    or a Landsat scene displaced by its geolocation (tier 2).}}
+  \label{fig:record1}
+\end{cutfigure}
+
+\begin{cutfigure}[bp]% foot of the references page; at 150 mm it would be half a line too tall for it
+  \wide{\includegraphics[width=135mm]{figures/satellite_record_2.pdf}}% 90 %
+  \credit{Aerial orthophotos: \textcopyright\,swisstopo (SWISSIMAGE); Landsat: U.S. Geological Survey;
+    Sentinel-2: contains modified Copernicus Sentinel data; PlanetScope: \textcopyright\,Planet Labs PBC}
+  \caption{The end of every summer with a usable image, 2016--2026, continued from \cref{fig:record1}.}
+  \label{fig:record2}
+\end{cutfigure}
+
+\phantomsection\label{sec:refs}
+\printbibliography[title=References]
+\end{reportpart}
+
+% ------------------------------------------------------- supplement
+\begin{supplementpart}
+\appendix
+\renewcommand*\thesection{S\arabic{section}}
+\renewcommand*\bottomfraction{.75}% a tall figure may close the last text page of a section
+\begin{cutblock}
+\section{Area following the volume}\label{sec:s1}
+
+\unv{After 2025 the volume of each hydrological year is the previous one minus the ice removed
+by the balance of Question~5.2, $A\,\dot B / \rho_\text{ice}$, with the area of that year; the
+next area is $A = (V/c)^{1/\gamma}$ with the $c$ and $\gamma$ of Question~5.1\cut{
+(\cref{fig:s1})}. Half of the 2021 volume is gone in 2044. In 2100 \qty{3.4e6}{\cubic\metre}
+remain, where the constant area has no ice after 2060. Both curves keep the balance rate fixed
+while the glacier retreats; in reality the lowest parts, which lose the most, go first, and the
+balance of the remaining glacier is less negative.\cut{\par Computed with \texttt{code/task5\_projection.py}, Python on a laptop, under one second.}}
+
+\begin{cutfigure}[htbp]
+  \wide{\includegraphics{figures/volume_projection_si.pdf}}
+  \caption{Projected volume at the end of each hydrological year. \unv{Scaling for 2021, the
+    balances of 2022--2025 from Task~4 (shaded), then the mean balance of 1996--2025. Black:
+    area constant at 2021; blue: area following the volume. Dashed: half of the 2021 volume;
+    dots: the first year below it.}}
+  \label{fig:s1}
+\end{cutfigure}
+\end{cutblock}
+
+\section{The bed from the thickness map}\label{sec:s2}
+
+\unv{The Swiss thickness map \parencite{Grab2021, Grab2020data} gives the bed and the ice
+thickness on a \qty{10}{\metre} grid for the surface of 2012, for Basòdino from six radar
+profiles of 2006\cut{ (\cref{fig:s2})}. The thickness on 30 September 2021 is the 2021 surface minus
+the bed, zero where the bed lies above the surface (\qty{13}{\percent} of the 2021 area):
+\qty{1.4e7}{\cubic\metre}, \qty{9}{\metre} on average. The map's own uncertainty is wide: cell
+by cell it spans \qty{0.6e7}{} to \qty{4.3e7}{\cubic\metre} around its 2012 volume of
+\qty{2.3e7}{\cubic\metre}.
+
+\cut{From there we melted every cell with the balance that Glacier Monitoring Switzerland measured
+in its \qty{100}{\metre} elevation band, period by period, from September 2021 to September
+2026, times $0.86 \pm 0.12$ (the ratio of the geodetic loss to the sum of the stake balances
+over 2012--2024). A cell leaves the glacier when its ice is gone. The ice area left is compared with
+the glacier outlines we drew from Sentinel-2:
+\par\medskip\noindent{\small\addfontfeature{Numbers=Tabular}
+\begin{tabular}{@{} l S[table-format=1.2] S[table-format=1.2] @{}}\toprule
+  ice area (\qty{e6}{\square\metre}) & {map, as published} & {observed} \\
+  \midrule
+  30 September 2021 & 1.38 & 1.58 \\
+  September 2024    & 1.03 & 1.39 \\
+  September 2025    & 0.92 & 1.24 \\
+  September 2026    & 0.60 & 1.03 \\
+  \bottomrule
+\end{tabular}}\par\medskip}%
+The map loses area too fast, so its ice is too thin. Thickened everywhere by 0.4 to 0.6 of its
+stated uncertainty, it matches the outlines of 2025 and 2026, and the 2021 volume becomes
+\qty{2.1e7}{} to \qty{2.4e7}{\cubic\metre}: 1.5 to 1.7 times the map, a third of the scaling
+value. Beyond 2026 this method needs modelled balances per band; the runs without flow of
+\cref{sec:s3} are exactly that.
+
+\cut{The volume alone shows the same. From September 2021 to August 2024 Glacier Monitoring
+Switzerland measured $-1.99 \pm 0.25$ m\,w.e. per year (geodetic), then \qty{-1.52}{} m\,w.e.
+in 2025 and \qty{-3.50}{} m\,w.e. in 2026 (provisional). Over the 2021 area these balances remove
+\qty{1.70 \pm 0.16 e7}{\cubic\metre} of ice between 30 September 2021 and 29 September 2026:
+$1.20 \pm 0.11$ times the volume the map gave the glacier in 2021 (the uncertainty is that of
+the loss; the map's own is what the test is about). By the map the glacier
+would have vanished during the summer of 2026; on 27 September it covered
+\qty{1.03e6}{\square\metre}. The same test on every Swiss glacier with a thickness map and a
+later survey, 1313 of 1400: by the latest survey, 2019 to 2024, 18 had lost more ice than the
+map holds, two of them beyond two standard deviations; Basòdino stood at $0.91 \pm 0.13$ in
+August 2024, before the summers of 2025 and 2026.\par Computed with \texttt{thickness.py}, \texttt{area\_clock.py}, \texttt{volume\_clock.py} and
+\texttt{national\_screen.py} in \texttt{code/}, Python on a laptop, seconds.}}
+
+\begin{cutfigure}[htbp]
+  \wide{\includegraphics{figures/thickness_sections_si.pdf}}
+  \credit{Ice thickness and bed: \textcite{Grab2020data}, Creative Commons Attribution 4.0;
+    elevation models and masks: course material}
+  \caption{Published ice thickness for the surface of 2012, with two sections. \unv{(a)
+    Thickness over the outline of the Swiss Glacier Inventory 2016; black: the 2021 outline.
+    (b) Section from the summit to the tongue, true scale. (c) Section across the main body
+    along two radar profiles of 2006, vertical scale three times the horizontal. Grey: rock;
+    pale blue: ice of 2021; dashed: the 1994 surface.}}
+  \label{fig:s2}
+\end{cutfigure}
+
+\section{Ice-flow model}\label{sec:s3}
+
+\unv{We used the Instructed Glacier Model, version 3.2.0 \parencite{Jouvet2023}, on the
+\qty{10}{\metre} grid of the course data, \num{340} by \num{290} cells. Its mass balance is a
+temperature-index model with a radiation term, driven by the daily weather of Locarno\mbox{-}Monti
+carried up to the glacier with lapse rates measured against the Robiei station below the
+glacier, with snow moved by the curvature of the surface. The balance parameters were
+calibrated on the measurements of Glacier Monitoring Switzerland 1991--2026\cut{ (winter and
+annual balances per elevation band, 344 stake readings, and the geodetic volume changes)}:
+\num{131072} parameter draws, resampled to 128 by their likelihood.
+
+Each run starts on 30 September 2021 from the measured thickness of \cref{sec:s2}, thickened
+by a drawn share of its uncertainty (2021 volume \qty{1.9e7}{} to \qty{2.5e7}{\cubic\metre}),
+runs through the observed weather to September 2026, and then under one of 26 climate model
+chains of the Swiss scenarios CH2025 for one of three emission scenarios (SSP1-2.6, SSP2-4.5,
+SSP5-8.5) to 2100: 128 draws by 26 chains by 3 scenarios, \num{9984} members\cut{, plus 78 with the
+map as published}.\cut{ Each chain is shifted so that its 2026 matches the observed station
+temperature.} Every member was also run without ice flow.
+
+Results (\swap{\cref{fig:s3flow,fig:s3a,fig:s3b,fig:s3c}}{\cref{fig:s3a}}):
+\begin{itemize}
+  \item Half of the 2021 volume is gone in 2026, in every member: the observed weather of
+    2021--2026 did that. Half of the 2026 volume is gone in 2029 (2028 to 2032 for \qty{90}{\percent}
+    of the members).
+  \item The ice area falls below \qty{1e4}{\square\metre} in 2039 to 2040 (median), 2035 to
+    2048 for \qty{90}{\percent} of the members. The three emission scenarios differ by at most
+    1.5 years, because the ice is gone before they separate.\cut{ With the chains left unshifted,
+    about \qty{0.5}{\kelvin} cooler in 2026, the median is 2047.}
+  \item With and without flow, \qty{96}{\percent} of the members disappear in the same year.
+\cut{    The spread comes from the climate chain, the 2026 temperature level and the order of the
+    weather years, not from the flow. The modelled glacier of 1850 flows at \qty{17}{\metre}
+    per year in the median and up to \qty{27}{\metre} per year in its central basin; the
+    hindcast's own ice of 2021 at \qty{1.7}{\metre} per year; the ice restarted from the measured
+    thickness at \qty{0.25}{\metre} per year in 2021 and \qty{0.04}{\metre} per year by 2026
+    (\cref{fig:s3flow}).}
+  \cut{\item Check against the past: the same model, run from 1850, loses \qty{1.4e7}{\cubic\metre}
+    between 1907 and 1991, against \qty{1.6 \pm 0.4 e8}{\cubic\metre} measured (six surveys
+    chained), and hits only two of
+    the four inventory areas. The projections start from the measured 2021 state and do not use
+    this run, but the model does not reproduce the glacier of the twentieth century.}
+\end{itemize}
+\cut{\par Computed on the server s03 with two NVIDIA H200 graphics cards, eight runs per card at once:
+the \num{10062} projections from 18:11 on 9 October to 02:18 on 10 October 2026, 8.1 hours,
+97 process-hours, a median of \qty{32}{\second} per run; the \num{9984} runs without flow in 8
+minutes. Code in \texttt{igm/}.}}
+
+\begin{cutfigure}[tbp]
+  \wide{\includegraphics[width=138mm]{figures/igm_flow.pdf}}% 92 %: with the text of S3 on one page
+  \caption{Flow of the modelled glacier, the film member of the run set. \unv{(a) Surface speed
+    of the 1850 state in steps of \qty{5}{\metre} per year with streamlines of the velocity, over
+    a hillshade of the bed; red: the 1850 outline of the inventory; dashed: section A. (b) Ice
+    thickness along section A, summit to tongue: the hindcast ice lost between 1850, 1900, 2000
+    and 2021 as grey bands, the hindcast's own 2021 ice in blue, the 2021 start from the measured
+    thickness in red; the upper axis gives the bed elevation. (c) Surface speed over the
+    ice-covered cells, weighted by thickness, median and \qtyrange{5}{95}{\percent}: the hindcast
+    1850--2021 in blue, the restart from the measured thickness 2021--2038 in red.}}
+  \label{fig:s3flow}
+\end{cutfigure}
+
+\newcommand\figsthreea{% its own page; with the text in the 15-page version
+  \variant{\wide{\includegraphics{figures/igm_volume_area.pdf}}}{\wide{\includegraphics[width=110mm]{figures/igm_volume_area.pdf}}}
+  \caption{Volume and ice area 2021--2100 per emission scenario. \unv{Blue: median and
+    \qtyrange{17}{83}{\percent} and \qtyrange{5}{95}{\percent} of the members with the chains
+    shifted to the observed 2026; grey: median and \qty{95}{\percent} with the chains unshifted.
+    Black: the 2021 start and the observed areas 2024--2026. The time axis is compressed after
+    2050.}}
+  \label{fig:s3a}
+}
+\variant{\begin{figure}[p]\figsthreea\end{figure}}{\begin{figure}[htbp]\figsthreea\end{figure}}
+
+\begin{cutfigure}[p]
+  \wide{\includegraphics{figures/igm_icefree_map.pdf}}
+  \caption{Year each cell becomes ice-free, chains shifted to 2026, all scenarios. \unv{(a)
+    Median over the members; (b) the range of \qty{90}{\percent} of the members. Outlines of
+    the glacier inventories 1850 to 2024 and ours of 2026.}}
+  \label{fig:s3b}
+\end{cutfigure}
+
+\begin{cutfigure}[p]
+  \wide{\includegraphics{figures/igm_years.pdf}}
+  \caption{The years of the ice-flow run set. \unv{(a) Half of the 2026 volume, area below
+    \qty{1e5}{} and below \qty{1e4}{\square\metre}, per scenario: 5, 17, 50, 83 and
+    95 per cent of the members; blue: chains shifted to 2026, grey: unshifted. (b) Share of the
+    spread per factor. (c) Share of the members whose year changes without flow.}}
+  \label{fig:s3c}
+\end{cutfigure}
+
+\ifsupplementbuild\FloatBarrier\phantomsection\label{sec:srefs}\printbibliography[title=References]\fi
+% ------------------------------------------------------------- outro
+\begin{cutblock}
+\clearpage
+\thispagestyle{bare}\KOMAoptions{headsepline=false}
+\vspace*{\fill}\phantomsection\label{sec:outro}
+\wide{\includegraphics[width=150mm]{figures/outro_1850.jpg}}\par
+\vspace{2.5mm}
+\wide{\includegraphics[width=150mm]{figures/outro_2026.jpg}}\par
+\vspace{2.5mm}
+\wide{\includegraphics[width=150mm]{figures/outro_2035.jpg}}\par
+\credit{Ice-flow model (\cref{\sref{sec:s3}}); terrain: swissALTI3D and SWISSIMAGE, \textcopyright\,swisstopo; Blender}
+{\sffamily\small\color{rock}\noindent\unv{The same camera from the south-east in 1850, 2026 and 2035. Top: the
+modelled glacier of 1850, \qty{2.6e8}{\cubic\metre} of ice, run from a steady state through the observed weather.
+Middle: the model's 2026 state, restarted from the measured thickness in 2021. Bottom: 2035, under the middle
+emission scenario, four years before the ice area falls below \qty{1e4}{\square\metre}. The smooth grey surface
+is the modelled bed where the thickness map covers, not terrain.}\par}
+\vspace*{\fill}
+\end{cutblock}
+\end{supplementpart}
+
+\end{document}

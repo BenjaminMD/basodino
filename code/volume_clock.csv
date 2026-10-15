@@ -1,0 +1,50 @@
+quantity,k,start,end,value,sigma,sigma_correlated,unit,definition
+rate_all_pairs_max_deviation,,,,0.000500806,,,m w.e. a-1,largest |published - whole-year rate| over all 144 GLAMOS pairs of C14-10
+rate_published,,2012,2024-08-23,-0.943,0.136,,m w.e. a-1,"GLAMOS sa3d-2018 to is-stand, per balance year"
+rate_whole_years,,2012,2024-08-23,-0.943266,,,m w.e. a-1,"850/1000 dV / (A_mean x 12 a), dV -0.020539 km3, A_mean 1.54235 km2"
+rate_survey_days,,2012-08-19,2024-08-23,-0.942406,,,m w.e. a-1,the same over 12.011 a between the survey days
+rate_survey_days,,2012-09-08,2024-08-23,-0.946722,,,m w.e. a-1,the same over 11.956 a between the survey days
+rate_published,,2021,2024-08-23,-1.989,0.251,,m w.e. a-1,"GLAMOS sa3d-2022 to is-stand, per balance year"
+rate_whole_years,,2021,2024-08-23,-1.9888,,,m w.e. a-1,"850/1000 dV / (A_mean x 3 a), dV -0.010424 km3, A_mean 1.48505 km2"
+rate_survey_days,,2021-09-30,2024-08-23,-2.05976,,,m w.e. a-1,the same over 2.897 a between the survey days
+k,,2012,2024-08-23,0.855893,0.123403,,,"used: geodetic -11.319 m w.e. over the sum of 12 observation periods 2012-09-07 to 2024-09-03, -13.225 m w.e."
+k,,2021,2024-08-23,0.845099,0.106657,,,"check: geodetic -5.966 m w.e. over the sum of 3 observation periods 2021-09-10 to 2024-09-03, -7.060 m w.e."
+k,,2012,2021,0.852632,0.162044,,,"glacier-wide counterpart of k_b: geodetic -5.256 m w.e. over the sum of 9 observation periods 2012-09-07 to 2021-09-10, -6.165 m w.e."
+k_glamos_areas,,2012,2024-08-23,0.78803,,,,850/1000 dV over the sum of Ba x GLAMOS balance area of the same periods
+dV,,2021-09-30,2024-08-23,-0.010424,0.00131558,,km3,first link of the 2021 basis: GLAMOS sa3d-2022 to is-stand; sigma 0.251 m w.e. a-1 x 3 a x 1.48505 km2 x 1000/850
+gap,,2024-08-23,2024-09-03,,,,km3,"11 days without a measurement, not counted: melt in them adds to the loss"
+dV,0.855893,2024-09-03,2025-09-06,-0.0018952,0.000583596,,km3,"k x -1.520 m w.e. x 1000/900 x 1.3111 km2; GLAMOS observation period, release 2025; A = mean of our outlines 2024-09-10 and 2025-09-07"
+dV,0.855893,2025-09-06,2026-09-29,-0.00376776,0.000752835,,km3,"k x -3.503 m w.e. x 1000/900 x 1.1310 km2; GLAMOS annual report 2026, Fig. A.1, provisional; A = mean of our outlines 2025-09-07 and 2026-09-27"
+dV,,2012,2024-08-23,-0.020539,0.00296131,,km3,"first link of the 2012 basis, instead of the 2021 one: GLAMOS sa3d-2018 to is-stand; sigma 0.136 m w.e. a-1 x 12 a x 1.54235 km2 x 1000/850"
+V_map_2021,,2021-09-30,,0.0141744,,,km3,"the map on the course mask 2021: sum of max(z_2021 - bed, 0) x 100 m2 (code/thickness.csv V_2021)"
+V_map_2012,,2012,,0.022682,,,km3,"the map's own volume on the 2016 outline, 2012 surface (code/thickness.csv V_2012)"
+V_2012_outside,,2012,,0.00131425,,,km3,upper end of the range 0 to this: sum of (z_2012 - z_2021 + 0.556 m) on the 0.2736 km2 inside the 2010 and outside the 2016 inventory (0.0116 km2 of it still ice in 2021)
+area_left,,2026-09-27,,1.02523,0.0925,,km2,our Sentinel-2 outline; sigma one pixel along the perimeter
+loss_since_2021,1,2021-09-30,2026-09-29,0.0170404,0.00160308,0.00160308,km3,balances as published; gap 2024-08-23 to 2024-09-03 not counted
+ratio_to_map_2021,1,2021-09-30,2026-09-29,1.2022,0.113097,0.113097,,loss_since_2021 / V_map_2021
+loss_since_2021,0.855893,2021-09-30,2024-08-23,0.010424,0.00131558,0.00131558,km3,k 2012-2024; gap 2024-08-23 to 2024-09-03 not counted
+ratio_to_map_2021,0.855893,2021-09-30,2024-08-23,0.73541,0.0928138,0.0928138,,loss_since_2021 / V_map_2021
+loss_since_2021,0.855893,2021-09-30,2025-09-06,0.0123192,0.00143921,0.00167042,km3,k 2012-2024; gap 2024-08-23 to 2024-09-03 not counted
+ratio_to_map_2021,0.855893,2021-09-30,2025-09-06,0.869116,0.101536,0.117848,,loss_since_2021 / V_map_2021
+loss_since_2021,0.855893,2021-09-30,2026-09-29,0.016087,0.00173554,0.00227165,km3,k 2012-2024; gap 2024-08-23 to 2024-09-03 not counted
+ratio_to_map_2021,0.855893,2021-09-30,2026-09-29,1.13493,0.122442,0.160264,,loss_since_2021 / V_map_2021
+loss_since_2021,0.77,2021-09-30,2026-09-29,0.0155186,0.00149274,0.00149274,km3,approved conventions; gap 2024-08-23 to 2024-09-03 not counted
+ratio_to_map_2021,0.77,2021-09-30,2026-09-29,1.09484,0.105312,0.105312,,loss_since_2021 / V_map_2021
+loss_since_2021,0.852632,2021-09-30,2026-09-29,0.0160654,0.00186823,0.00251223,km3,"k 2012-2021, glacier-wide k_b; gap 2024-08-23 to 2024-09-03 not counted"
+ratio_to_map_2021,0.852632,2021-09-30,2026-09-29,1.13341,0.131803,0.177237,,loss_since_2021 / V_map_2021
+loss_since_2012,1,2012,2026-09-29,0.0271554,0.00309976,0.00309976,km3,balances as published; gap 2024-08-23 to 2024-09-03 not counted
+ratio_to_map_2012,1,2012,2026-09-29,1.19722,0.136662,0.136662,,loss_since_2012 / V_map_2012
+ratio_to_map_2012_with_outside,1,2012,2026-09-29,1.13165,0.129177,0.129177,,loss_since_2012 / (V_map_2012 + V_2012_outside)
+loss_since_2012,0.855893,2012,2024-08-23,0.020539,0.00296131,0.00296131,km3,k 2012-2024; gap 2024-08-23 to 2024-09-03 not counted
+ratio_to_map_2012,0.855893,2012,2024-08-23,0.90552,0.130558,0.130558,,loss_since_2012 / V_map_2012
+loss_since_2012,0.855893,2012,2025-09-06,0.0224342,0.00301827,0.00327541,km3,k 2012-2024; gap 2024-08-23 to 2024-09-03 not counted
+ratio_to_map_2012,0.855893,2012,2025-09-06,0.989075,0.133069,0.144406,,loss_since_2012 / V_map_2012
+loss_since_2012,0.855893,2012,2026-09-29,0.026202,0.00317029,0.0038583,km3,k 2012-2024; gap 2024-08-23 to 2024-09-03 not counted
+ratio_to_map_2012,0.855893,2012,2026-09-29,1.15519,0.139771,0.170104,,loss_since_2012 / V_map_2012
+ratio_to_map_2012_with_outside,0.855893,2012,2026-09-29,1.09192,0.132116,0.160787,,loss_since_2012 / (V_map_2012 + V_2012_outside)
+loss_since_2012,0.77,2012,2026-09-29,0.0256336,0.00304416,0.00304416,km3,approved conventions; gap 2024-08-23 to 2024-09-03 not counted
+ratio_to_map_2012,0.77,2012,2026-09-29,1.13013,0.13421,0.13421,,loss_since_2012 / V_map_2012
+ratio_to_map_2012_with_outside,0.77,2012,2026-09-29,1.06824,0.12686,0.12686,,loss_since_2012 / (V_map_2012 + V_2012_outside)
+loss_since_2012,0.852632,2012,2026-09-29,0.0261804,0.00324483,0.00410839,km3,"k 2012-2021, glacier-wide k_b; gap 2024-08-23 to 2024-09-03 not counted"
+ratio_to_map_2012,0.852632,2012,2026-09-29,1.15424,0.143057,0.18113,,loss_since_2012 / V_map_2012
+ratio_to_map_2012_with_outside,0.852632,2012,2026-09-29,1.09102,0.135222,0.17121,,loss_since_2012 / (V_map_2012 + V_2012_outside)

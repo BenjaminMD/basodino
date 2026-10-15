@@ -1,0 +1,39 @@
+# @package _global_
+# Gate 3b: the reference solve, velocity field itself minimised with L-BFGS (identity mapping, as
+# igm-examples aletsch experiment/common/iceflow_reference.yaml and bench/experiment/reference.yaml), on one start
+# state: time.end = time.start, inputs.geometry as the online run it is compared with; nbit_init iterations.
+defaults:
+  - common: online
+  - /user/conf/inputs@inputs: [geometry]
+  - /user/conf/processes@processes: [clim_otl, smb_ti]
+  - /user/conf/outputs@outputs: [track]
+  - override /inputs: [geometry]
+  - override /processes: [clim_otl, smb_ti, iceflow, time, thk]
+  - override /outputs: [track]
+
+processes:
+  clim_otl:
+    dT: -2.4563
+    dg: 0.0015805
+    b: -0.00013046
+    c_prec: 2.7247
+  smb_ti:
+    Fm: 0.001047871
+  iceflow:
+    numerics:
+      Nz: 4
+      vert_spacing: 4.0
+      basis_vertical: Lagrange
+    unified:
+      mapping: identity
+      optimizer: lbfgs
+      nbit: 50
+      nbit_init: 3000
+      retrain_freq: 1
+      lbfgs:
+        memory: 10
+        alpha_min: 0.0
+      line_search: hager-zhang
+  time:
+    start: 2021.75
+    end: 2021.75

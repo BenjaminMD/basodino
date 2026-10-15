@@ -1,0 +1,18 @@
+quantity,value,unit,definition
+A_2021,1.6065,km2,Task 1
+V_2021,0.0652477,km3,c A_2021^gamma
+H_2021,40.6148,m,mean ice thickness V_2021 / A_2021
+B_2022_2025,-5.88392,m w.e.,"sum of Task 4, OTL"
+V_2025,0.0547449,km3,V_2021 + A_2021 x B_2022_2025 x rho_w / rho_ice
+B_future,-0.897094,m w.e. a-1,mean of hydrological years 1996-2025
+B_future_1995_2025,-0.868416,m w.e. a-1,the same over 31 years 1995-2025
+dH_future,-0.996771,m ice a-1,thinning rate after 2025
+half_volume_year_constant,2039,,"first year with V <= V_2021 / 2, area constant"
+V_2050_constant,0.0147121,km3,
+V_2100_constant,0,km3,
+zero_volume_year_constant,2060,,
+half_volume_year_scaling,2044,,"first year with V <= V_2021 / 2, area scaling"
+V_2050_scaling,0.0270176,km3,
+V_2100_scaling,0.00339387,km3,
+B_recent_2015_2025,-1.30043,m w.e. a-1,mean of hydrological years 2015-2025
+half_volume_year_constant_recent,2035,,"area constant, balance of 2015-2025 after 2025"
