@@ -18,6 +18,7 @@
 \ifx\aglmode\agl@modereport\agl@reporttrue\fi
 \ifx\aglmode\agl@modesupplement\agl@supplementtrue\fi
 \let\ifsupplementbuild\ifagl@supplement% for the body, outside \makeatletter
+\newif\ifsplitbuild\ifagl@report\splitbuildtrue\fi\ifagl@supplement\splitbuildtrue\fi
 % the two halves of the document; each split build drops the other half
 \ifagl@supplement
   \NewDocumentEnvironment{reportpart}{+b}{}{}
@@ -132,13 +133,15 @@
   \agl@sub{5.2}{When half the ice is gone}{6 pts}{q:52}
   \agl@sub{5.3}{Beyond the constant area}{4 pts}{q:53}
   \agl@row{}{References}{}{sec:refs}
-  \agl@row{}{The glacier from orbit\cut{, 1938--2026}}{Figure\swap{s 3--6}{ 3}}{fig:outline}
+  \ifsplitbuild\agl@row{}{Our outline of 27 September 2026}{Figure 3}{fig:outline}\else
+  \agl@row{}{The glacier from orbit\cut{, 1938--2026}}{Figure\swap{s 3--6}{ 3}}{fig:outline}\fi
   \vspace{3mm}%
   \agl@part{Supplements}
   \ifagl@report
   \agl@row{S1}{Area following the volume}{separate PDF}{}
   \agl@row{S2}{The bed from the thickness map}{separate PDF}{}
   \agl@row{S3}{Ice-flow model}{separate PDF}{}
+  \agl@row{S4}{The glacier from orbit, 1938--2026}{separate PDF}{}
   \agl@row{}{The same view in 1850, 2026 and 2035}{separate PDF}{}
   \else
   \cut{\agl@row{S1}{Area following the volume}{}{sec:s1}}
@@ -182,6 +185,7 @@
   \agl@row{S1}{Area following the volume}{}{sec:s1}
   \agl@row{S2}{The bed from the thickness map}{}{sec:s2}
   \agl@row{S3}{Ice-flow model}{}{sec:s3}
+  \agl@row{S4}{The glacier from orbit, 1938--2026}{}{sec:s4}
   \agl@row{}{References}{}{sec:srefs}
   \agl@row{}{The same view in 1850, 2026 and 2035}{}{sec:outro}
   \begin{tikzpicture}[remember picture, overlay]
@@ -194,6 +198,37 @@
 \makeatother
 
 \renewcommand\unv[1]{#1}% all passages accepted: set in black (remove this line to see them in blue again)
+\newcommand\figsummers{% body of the figure: in the report of the unsplit builds, Section S4 of the supplement
+  \wide{\includegraphics[width=143.5mm]{figures/satellite_summers.pdf}}% 96 %: at 150 mm the page is 9 mm short
+  \credit{PlanetScope: \textcopyright\,Planet Labs PBC 2018--2026, Education and Research programme;
+    Sentinel-2: contains modified Copernicus Sentinel data 2016--2024}
+  \caption{The end of every summer 2016--2026 in true colour, PlanetScope (\qty{3}{\metre}) where
+    the archive has a clear scene after 10 September and Sentinel-2 (\qty{10}{\metre}) for 2016,
+    2017 and 2024. \unv{One colour stretch for all tiles; red: our outline of 27 September 2026 in
+    every tile, so that the ice beyond it is the ice lost. The glacier of 2016 reaches well beyond
+    the red line on every side; from 2022 on, the summers end with bare ice over the whole glacier.}}
+  \label{fig:summers}
+}
+\newcommand\figrecordone{% body of the figure: in the report of the unsplit builds, Section S4 of the supplement
+  \wide{\includegraphics[width=142.5mm]{figures/satellite_record_1.pdf}}% 95 %: at 150 mm the page is 10 mm short
+  \credit{Aerial orthophotos: \textcopyright\,swisstopo (LUBIS, SWISSIMAGE); Landsat: U.S. Geological Survey;
+    Sentinel-2: contains modified Copernicus Sentinel data}
+  \caption{The end of every summer with a usable image, 1938--2015: the best image of each year after 10
+    August, aerial orthophoto, Sentinel-2 or Landsat. \unv{The window E 2678800--2681800,
+    N 1140200--1142200 holds the glacier of 1931. Red: our outline of 27 September 2026 in every tile.
+    Black and white: aerial films; false colour (near infrared, red, green): the Landsat 5
+    multispectral scanner at \qty{60}{\metre} in 2012; the other satellites in true colour with one
+    stretch, near-saturated snow drawn grey. Years without a usable image are left out: no image, cloud,
+    or a Landsat scene displaced by its geolocation (tier 2).}}
+  \label{fig:record1}
+}
+\newcommand\figrecordtwo{% body of the figure: in the report of the unsplit builds, Section S4 of the supplement
+  \wide{\includegraphics[width=135mm]{figures/satellite_record_2.pdf}}% 90 %
+  \credit{Aerial orthophotos: \textcopyright\,swisstopo (SWISSIMAGE); Landsat: U.S. Geological Survey;
+    Sentinel-2: contains modified Copernicus Sentinel data; PlanetScope: \textcopyright\,Planet Labs PBC}
+  \caption{The end of every summer with a usable image, 2016--2026, continued from \cref{fig:record1}.}
+  \label{fig:record2}
+}
 \begin{document}
 \maketitle
 \begin{reportpart}
@@ -685,7 +720,7 @@ Explain how, and what additional information, tools or methods (if any) you woul
     (\cref{\sref{sec:s3}}). For a glacier \qty{9}{\metre} thick the flow no longer matters; the bed
     does.
 \end{enumerate}
-\cut{Satellite images check the area every year (\cref{fig:summers,fig:record1,fig:record2}). }With Sentinel-2 we measured
+\ifsplitbuild Satellite images check the area every year (supplement, Section~S4). \else\cut{Satellite images check the area every year (\cref{fig:summers,fig:record1,fig:record2}). }\fi With Sentinel-2 we measured
 \qty{1.03 \pm 0.09 e6}{\square\metre} on 27 September 2026 (\cref{fig:outline}),
 \qty{35 \pm 8}{\percent} less than in 2021 by the same method.
 
@@ -718,39 +753,11 @@ ice-flow model (ice gone in 2039 to 2040); the last two need the bed and computi
   \label{fig:outline}
 \end{figure}
 
-\begin{cutfigure}[p]
-  \wide{\includegraphics[width=143.5mm]{figures/satellite_summers.pdf}}% 96 %: at 150 mm the page is 9 mm short
-  \credit{PlanetScope: \textcopyright\,Planet Labs PBC 2018--2026, Education and Research programme;
-    Sentinel-2: contains modified Copernicus Sentinel data 2016--2024}
-  \caption{The end of every summer 2016--2026 in true colour, PlanetScope (\qty{3}{\metre}) where
-    the archive has a clear scene after 10 September and Sentinel-2 (\qty{10}{\metre}) for 2016,
-    2017 and 2024. \unv{One colour stretch for all tiles; red: our outline of 27 September 2026 in
-    every tile, so that the ice beyond it is the ice lost. The glacier of 2016 reaches well beyond
-    the red line on every side; from 2022 on, the summers end with bare ice over the whole glacier.}}
-  \label{fig:summers}
-\end{cutfigure}
-
-\begin{cutfigure}[p]
-  \wide{\includegraphics[width=142.5mm]{figures/satellite_record_1.pdf}}% 95 %: at 150 mm the page is 10 mm short
-  \credit{Aerial orthophotos: \textcopyright\,swisstopo (LUBIS, SWISSIMAGE); Landsat: U.S. Geological Survey;
-    Sentinel-2: contains modified Copernicus Sentinel data}
-  \caption{The end of every summer with a usable image, 1938--2015: the best image of each year after 10
-    August, aerial orthophoto, Sentinel-2 or Landsat. \unv{The window E 2678800--2681800,
-    N 1140200--1142200 holds the glacier of 1931. Red: our outline of 27 September 2026 in every tile.
-    Black and white: aerial films; false colour (near infrared, red, green): the Landsat 5
-    multispectral scanner at \qty{60}{\metre} in 2012; the other satellites in true colour with one
-    stretch, near-saturated snow drawn grey. Years without a usable image are left out: no image, cloud,
-    or a Landsat scene displaced by its geolocation (tier 2).}}
-  \label{fig:record1}
-\end{cutfigure}
-
-\begin{cutfigure}[bp]% foot of the references page; at 150 mm it would be half a line too tall for it
-  \wide{\includegraphics[width=135mm]{figures/satellite_record_2.pdf}}% 90 %
-  \credit{Aerial orthophotos: \textcopyright\,swisstopo (SWISSIMAGE); Landsat: U.S. Geological Survey;
-    Sentinel-2: contains modified Copernicus Sentinel data; PlanetScope: \textcopyright\,Planet Labs PBC}
-  \caption{The end of every summer with a usable image, 2016--2026, continued from \cref{fig:record1}.}
-  \label{fig:record2}
-\end{cutfigure}
+\ifsplitbuild\else% the three satellite figures stay in the report only when it is not split
+\begin{cutfigure}[p]\figsummers\end{cutfigure}
+\begin{cutfigure}[p]\figrecordone\end{cutfigure}
+\begin{cutfigure}[bp]\figrecordtwo\end{cutfigure}% foot of the references page; at 150 mm it would be half a line too tall for it
+\fi
 
 \phantomsection\label{sec:refs}
 \printbibliography[title=References]
@@ -916,16 +923,27 @@ minutes. Code in \texttt{igm/}.}}
   \label{fig:s3b}
 \end{cutfigure}
 
-\begin{cutfigure}[p]
+\newcommand\figsthreec{% in the supplement at the top of a page, the satellite section below it
   \wide{\includegraphics{figures/igm_years.pdf}}
   \caption{The years of the ice-flow run set. \unv{(a) Half of the 2026 volume, area below
     \qty{1e5}{} and below \qty{1e4}{\square\metre}, per scenario: 5, 17, 50, 83 and
     95 per cent of the members; blue: chains shifted to 2026, grey: unshifted. (b) Share of the
     spread per factor. (c) Share of the members whose year changes without flow.}}
   \label{fig:s3c}
-\end{cutfigure}
+}
+\ifsupplementbuild\begin{figure}[tbp]\figsthreec\end{figure}\else
+\begin{cutfigure}[p]\figsthreec\end{cutfigure}\fi
 
-\ifsupplementbuild\FloatBarrier\phantomsection\label{sec:srefs}\printbibliography[title=References]\fi
+\ifsupplementbuild
+\FloatBarrier
+\section{The glacier from orbit, 1938--2026}\label{sec:s4}
+The end of every summer with a usable image, 1938 to 2026, with our outline of 27 September 2026 in every tile
+(\cref{fig:summers,fig:record1,fig:record2}; the outline itself is Figure~3 of the report). With Sentinel-2 we
+measured \qty{1.03 \pm 0.09 e6}{\square\metre} on that day, \qty{35 \pm 8}{\percent} less than in 2021 by the same method.
+\begin{figure}[p]\figsummers\end{figure}
+\begin{figure}[p]\figrecordone\end{figure}
+\begin{figure}[p]\figrecordtwo\end{figure}
+\FloatBarrier\phantomsection\label{sec:srefs}\printbibliography[title=References]\fi
 % ------------------------------------------------------------- outro
 \begin{cutblock}
 \clearpage
